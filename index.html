@@ -74,17 +74,13 @@
 :root{
   --bg:#ffffff; --surface:#ffffff; --soft:#f4f2f5; --ink:#17151a; --muted:#56525c; --line:#e2dfe6; --desk:#e8e6ec;
   --red:#b5122b; --red-ink:#ffffff; --red-soft:#fceaed; --red-deep:#8e0d21;
-  --blue:#1d4e9e; --blue-soft:#e8eef9; --ok:#17663f;
+  --blue:#b5122b; --blue-soft:#fceaed; --ok:#17663f;
   --shadow:0 1px 2px rgba(23,21,26,.06),0 12px 32px rgba(23,21,26,.12);
   --f-title:"Marcellus","Palatino Linotype",Georgia,serif;
   --f-body:"Atkinson Hyperlegible",Verdana,system-ui,sans-serif;
   color-scheme:light;
 }
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#121014; --surface:#1c1a20; --soft:#232028; --ink:#f6f4f8; --muted:#c1bcc7; --line:#38343e; --desk:#050506;
-  --red:#ee4a62; --red-ink:#1a0509; --red-soft:#3a161d; --red-deep:#ff7a8d;
-  --blue:#8db4ef; --blue-soft:#1a2436; --ok:#6bd09c;
-  --shadow:0 1px 2px rgba(0,0,0,.4),0 14px 36px rgba(0,0,0,.5);color-scheme:dark}}
+
 html{font-size:112.5%;-webkit-text-size-adjust:100%}
 html.grand{font-size:131%}
 html,body{height:100%;margin:0}
@@ -174,22 +170,22 @@ h3{font-size:1.3rem}
 .empty h3{font-size:1.4rem}
 .empty p{margin:0;color:var(--muted)}
 
-/* Écrire */
-.segs{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
-.seg{border:2px solid var(--line);background:var(--bg);border-radius:1.2rem;min-height:5.6rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.25rem;font-weight:700;font-size:1.1rem}
-.seg .e{font-size:2rem;line-height:1}
-.seg[aria-pressed="true"]{border-color:var(--red);background:var(--red-soft)}
-.miczone{display:flex;flex-direction:column;align-items:center;gap:.7rem;text-align:center}
-.micbig{width:6rem;height:6rem;border-radius:50%;border:0;background:var(--red);color:var(--red-ink);font-size:2.4rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(181,18,43,.35)}
+/* Écrire : une page blanche, le micro en bas */
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+main:has(#v-ecrire:not([hidden])){display:flex;flex-direction:column}
+#v-ecrire{flex:1 0 auto;gap:.6rem}
+.page{flex:1;display:flex;flex-direction:column;gap:.7rem;min-height:26rem}
+.dock{display:flex;flex-direction:column;gap:.5rem;align-items:stretch}
+.miczone{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-align:center}
+.micbig{width:4.6rem;height:4.6rem;border-radius:50%;border:0;background:var(--red);color:var(--red-ink);font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(181,18,43,.35)}
 .micbig.on{animation:pulse 1.3s infinite}
 @keyframes pulse{50%{box-shadow:0 0 0 1.1rem rgba(181,18,43,.18)}}
-.miczone p{margin:0;color:var(--muted)}
-.starters{display:flex;flex-wrap:wrap;gap:.5rem}
-.starters button{border:1.5px solid var(--line);background:var(--bg);border-radius:999px;padding:.5rem .95rem;font-size:.95rem;min-height:2.7rem}
+.miczone p{margin:0;color:var(--muted);font-size:.95rem}
 .label{font-weight:700}
-textarea{width:100%;min-height:10rem;resize:vertical;border:2px solid var(--ink);background:var(--surface);border-radius:1.1rem;padding:1rem;font-family:var(--f-title);font-size:1.3rem;line-height:1.45}
-.chars{margin:-.6rem .2rem 0;font-size:.85rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
-.opt{display:flex;gap:1rem;align-items:center;border:2px solid var(--line);border-radius:1.1rem;padding:.9rem 1rem;min-height:4.2rem;cursor:pointer;background:var(--bg)}
+textarea{width:100%;flex:1;min-height:9rem;resize:none;border:0;outline:0;background:transparent;caret-color:var(--red);padding:.4rem .1rem;font-family:var(--f-title);font-size:1.6rem;line-height:1.45}
+textarea::placeholder{color:#b9b4bd}
+.chars{margin:0 .2rem;font-size:.85rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.opt{display:flex;gap:.9rem;align-items:center;border:2px solid var(--line);border-radius:1.1rem;padding:.4rem .9rem;min-height:3rem;cursor:pointer;background:var(--bg)}
 .opt input{width:1.9rem;height:1.9rem;flex-shrink:0;margin:0;accent-color:var(--red)}
 .opt b{display:block;line-height:1.25}
 .opt small{display:block;color:var(--muted);font-size:.88rem;line-height:1.35;margin-top:.1rem}
@@ -260,18 +256,18 @@ nav.tabs .e{font-size:1.4rem}
 .splash-t{font-family:var(--f-title);font-size:1.9rem;margin:1rem 0 0;position:relative;opacity:0;animation:txtIn 1s ease 1.1s both}
 .splash-s{margin:0;color:var(--muted);letter-spacing:.14em;text-transform:uppercase;font-size:.8rem;position:relative;opacity:0;animation:txtIn 1s ease 1.4s both}
 @keyframes txtIn{from{opacity:0;transform:translateY(.4rem)}to{opacity:1;transform:none}}
-#home{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;background:#17151a}
+#home{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;background:#fff}
 .half{flex:1;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;text-align:center;padding:1.4rem;color:#fff;position:relative;transition:filter .15s}
 .half:active{filter:brightness(.9)}
 .half.prier{background:#a50f27;animation:fromTop .8s cubic-bezier(.2,.8,.2,1) both}
-.half.ecrire{background:#1d1b26;animation:fromBottom .8s cubic-bezier(.2,.8,.2,1) both}
+.half.ecrire{background:#fff;color:var(--red);animation:fromBottom .8s cubic-bezier(.2,.8,.2,1) both}
 @keyframes fromTop{from{transform:translateY(-100%)}}
 @keyframes fromBottom{from{transform:translateY(100%)}}
 .half .e{font-size:3.1rem;line-height:1}
 .half b{font-family:var(--f-title);font-weight:400;font-size:2.5rem;line-height:1.1}
 .half small{font-size:1.05rem;opacity:.92;max-width:15rem;line-height:1.35}
 .half.prier{padding-bottom:3.2rem}.half.ecrire{padding-top:3.2rem}
-.seal{position:absolute;left:50%;top:50%;width:5.6rem;height:5.6rem;margin:-2.8rem 0 0 -2.8rem;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none;animation:seal .6s cubic-bezier(.2,.9,.3,1.3) .55s both;z-index:2}
+.seal{position:absolute;left:50%;top:50%;width:5.6rem;height:5.6rem;margin:-2.8rem 0 0 -2.8rem;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 .3rem #fff,0 6px 24px rgba(0,0,0,.3);pointer-events:none;animation:seal .6s cubic-bezier(.2,.9,.3,1.3) .55s both;z-index:2}
 .seal img{height:3.5rem;width:auto}
 @keyframes seal{from{opacity:0;transform:scale(.4)}}
 #home .homesize{position:absolute;top:max(.8rem,env(safe-area-inset-top,0px));right:max(.9rem,env(safe-area-inset-right,0px));z-index:3;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.55);color:#fff}
@@ -314,34 +310,28 @@ nav.tabs .e{font-size:1.4rem}
 
     <!-- ECRIRE -->
     <section class="view" id="v-ecrire" aria-labelledby="h-ecrire" hidden>
-      <div>
-        <h2 id="h-ecrire">Confier une intention</h2>
-        <p class="lead">Comment voulez-vous la confier ?</p>
-      </div>
-      <div class="segs" role="group" aria-label="Manière d'écrire">
-        <button class="seg" type="button" id="modeMic" aria-pressed="false"><span class="e">🎤</span>Parler</button>
-        <button class="seg" type="button" id="modeKey" aria-pressed="true"><span class="e">⌨️</span>Au clavier</button>
-      </div>
-      <form id="form" novalidate class="view" style="gap:1rem">
-        <div class="miczone" id="micZone" hidden>
-          <button class="micbig" id="micBtn" type="button" aria-label="Commencer la dictée">🎤</button>
-          <p id="micHelp">Touchez le micro et parlez : votre intention s'écrit toute seule.</p>
-        </div>
-        <label class="label" for="texte">Votre intention</label>
-        <div class="starters" id="starters" aria-label="Phrases toutes prêtes"></div>
-        <textarea id="texte" maxlength="500" placeholder="Seigneur, je te confie…"></textarea>
+      <h2 id="h-ecrire" class="sr">Confier une intention</h2>
+      <form id="form" novalidate class="page">
+        <label class="sr" for="texte">Votre intention</label>
+        <textarea id="texte" maxlength="500" placeholder="Écrivez votre intention…"></textarea>
         <p class="chars" id="chars">0 / 500</p>
-        <label class="opt" for="lourdesChk">
-          <input type="checkbox" id="lourdesChk">
-          <div><b>Déposer à la Grotte de Lourdes</b><small>Imprimée et déposée par les bénévoles lors du pèlerinage de mai.</small></div>
-        </label>
-        <label class="opt" for="anonChk">
-          <input type="checkbox" id="anonChk" checked>
-          <div><b>Rester anonyme</b><small>Décochez pour signer avec votre prénom.</small></div>
-        </label>
-        <input type="text" id="prenom" maxlength="40" placeholder="Votre prénom" autocomplete="given-name" aria-label="Votre prénom" hidden>
-        <div class="notice" id="formNotice" role="alert" hidden></div>
-        <button class="big primary" id="sendBtn" type="submit">Envoyer mon intention</button>
+        <div class="dock">
+          <div class="miczone" id="micZone">
+            <button class="micbig" id="micBtn" type="button" aria-label="Commencer la dictée">🎤</button>
+            <p id="micHelp">Touchez le micro pour dicter</p>
+          </div>
+          <label class="opt" for="lourdesChk">
+            <input type="checkbox" id="lourdesChk">
+            <div><b>Déposer à la Grotte de Lourdes</b></div>
+          </label>
+          <label class="opt" for="anonChk">
+            <input type="checkbox" id="anonChk" checked>
+            <div><b>Rester anonyme</b></div>
+          </label>
+          <input type="text" id="prenom" maxlength="40" placeholder="Votre prénom" autocomplete="given-name" aria-label="Votre prénom" hidden>
+          <div class="notice" id="formNotice" role="alert" hidden></div>
+          <button class="big primary" id="sendBtn" type="submit">Envoyer mon intention</button>
+        </div>
       </form>
       <div class="minebox" id="mine" hidden>
         <h3>Vos intentions</h3>
@@ -623,20 +613,10 @@ nav.tabs .e{font-size:1.4rem}
   const majChars = () => { $("chars").textContent = texte.value.length + " / 500"; };
   texte.addEventListener("input", () => { majChars(); ecrire("brouillon", texte.value); });
   { const b = lire("brouillon", ""); if (b) { texte.value = b; majChars(); } }
-  [["Ma famille", "Seigneur, je te confie ma famille."], ["Les malades", "Seigneur, je te confie les malades et ceux qui souffrent."],
-   ["La paix", "Seigneur, donne la paix au monde."], ["Nos défunts", "Seigneur, accueille auprès de toi nos défunts."], ["Merci", "Merci, Seigneur, pour tout ce que tu nous donnes."]]
-    .forEach(([nom, phrase]) => { const b = el("button"); b.type = "button"; b.textContent = nom;
-      b.onclick = () => { texte.value = (texte.value.trim() ? texte.value.trim() + " " : "") + phrase; texte.value = texte.value.slice(0, 500); majChars(); ecrire("brouillon", texte.value); texte.focus(); };
-      $("starters").append(b); });
-  function setMode(mic) {
-    $("modeMic").setAttribute("aria-pressed", String(mic)); $("modeKey").setAttribute("aria-pressed", String(!mic));
-    $("micZone").hidden = !mic; if (!mic) { stopRec(); texte.focus(); }
-  }
-  $("modeMic").onclick = () => setMode(true); $("modeKey").onclick = () => setMode(false);
   $("anonChk").onchange = () => { const a = $("anonChk").checked; $("prenom").hidden = a; if (!a) $("prenom").focus(); };
 
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition; let rec = null;
-  const clavierMicro = () => { $("micHelp").textContent = "Touchez le texte puis le micro 🎤 de votre clavier, et parlez."; texte.focus(); };
+  const clavierMicro = () => { $("micHelp").textContent = "Touchez la page puis le micro 🎤 de votre clavier, et parlez."; texte.focus(); };
   function stopRec() { if (rec) { try { rec.stop(); } catch (e) {} } }
   $("micBtn").onclick = () => {
     if (rec) { stopRec(); return; } if (!SR) { clavierMicro(); return; }
@@ -645,7 +625,7 @@ nav.tabs .e{font-size:1.4rem}
       const base = texte.value ? texte.value.replace(/\s*$/, " ") : "";
       rec.onresult = (ev) => { let s = ""; for (let k = 0; k < ev.results.length; k++) s += ev.results[k][0].transcript; texte.value = (base + s).slice(0, 500); majChars(); ecrire("brouillon", texte.value); };
       rec.onerror = () => clavierMicro();
-      rec.onend = () => { rec = null; $("micBtn").classList.remove("on"); $("micBtn").textContent = "🎤"; $("micBtn").setAttribute("aria-label", "Commencer la dictée"); };
+      rec.onend = () => { rec = null; $("micBtn").classList.remove("on"); $("micBtn").textContent = "🎤"; $("micBtn").setAttribute("aria-label", "Commencer la dictée"); $("micHelp").textContent = "Touchez le micro pour dicter"; };
       rec.start(); $("micBtn").classList.add("on"); $("micBtn").textContent = "■"; $("micBtn").setAttribute("aria-label", "Arrêter la dictée"); $("micHelp").textContent = "Je vous écoute… Touchez le carré pour arrêter.";
     } catch (e) { rec = null; clavierMicro(); }
   };
