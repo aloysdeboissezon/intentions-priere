@@ -115,7 +115,7 @@ nav.tabs .ic{width:1.35rem;height:1.35rem}
 @keyframes wiggle{25%{transform:rotate(-14deg) scale(1.15)}75%{transform:rotate(14deg) scale(1.15)}}
 .count.fire{animation:fire .85s cubic-bezier(.2,.9,.3,1.2)}
 .count.fire .n{display:inline-block;animation:roll .5s .15s cubic-bezier(.2,.9,.3,1.3) both}
-@keyframes fire{0%{transform:scale(1.4)}35%{transform:scale(1.75) rotate(-5deg)}70%{transform:scale(1.5) rotate(3deg)}100%{transform:scale(1.4)}}
+@keyframes fire{0%{transform:scale(1)}35%{transform:scale(1.35) rotate(-5deg)}70%{transform:scale(1.2) rotate(3deg)}100%{transform:scale(1.1)}}
 @keyframes roll{from{transform:translateY(.9em);opacity:0}}
 .count .plus{position:absolute;right:.4rem;top:-.4rem;font-weight:700;font-size:1rem;color:#fff;pointer-events:none;animation:plus .9s ease-out forwards}
 @keyframes plus{from{opacity:0;transform:translateY(0)}20%{opacity:1}to{opacity:0;transform:translateY(-1.6rem)}}
@@ -167,7 +167,7 @@ nav.tabs .emo{font-size:1.35rem}
 .progress{display:none!important}
 main:has(#v-prier:not([hidden])){overflow:hidden;padding-bottom:.9rem}
 #v-prier{height:100%;min-height:0!important}
-.deck{min-height:0!important}
+.deck{min-height:0!important;margin-top:1.1rem}
 .actions,.titrerow,.grotte{flex-shrink:0}
 @media (max-height:780px){#bandeau{display:none!important}main{padding-top:.8rem}}
 @media (max-height:640px){.card .text{font-size:1.3rem}.card{padding:1.1rem 1.1rem .8rem}header.top .logo{height:2.3rem}header.top{padding-top:.5rem;padding-bottom:.45rem}.big{min-height:3.4rem}.rbtn{width:3.4rem;height:3.4rem}nav.tabs button{min-height:2.8rem!important}}
@@ -184,7 +184,7 @@ main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 @keyframes promote{from{transform:translateY(.8rem) scale(.95)}}
 .card,.card *{touch-action:pan-y}
 .card.promote{animation:promote .42s cubic-bezier(.2,.9,.3,1)}
-.card.anim.back{transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
+.card.anim.ressort{transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
 nav.tabs{position:relative;gap:0!important;margin:.4rem max(1rem,env(safe-area-inset-right,0px)) max(.8rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));padding:.3rem!important;background:var(--soft)!important;border:0!important;border-radius:.9rem}
 nav.tabs::before{content:"";position:absolute;top:.3rem;bottom:.3rem;left:.3rem;width:calc(50% - .3rem);background:var(--red);border-radius:.65rem;box-shadow:0 4px 14px rgba(157,19,40,.35);transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
 nav.tabs[data-sel="ecrire"]::before{transform:translateX(100%)}
@@ -204,7 +204,7 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .progress i.on{background:var(--red)}
 #v-prier{min-height:100%}
 .deck{position:relative;flex:1;min-height:16rem;perspective:1000px}
-.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;box-shadow:var(--shadow);padding:1.4rem 1.3rem 1.1rem;display:flex;flex-direction:column;gap:.9rem;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;transform-origin:50% 100%}
+.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;box-shadow:var(--shadow);padding:1.4rem 1.3rem 1.1rem;display:flex;flex-direction:column;gap:.9rem;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;transform-origin:50% 100%}
 .card.l1{transform:translateY(.55rem) scale(.95);pointer-events:none}
 .card.l2{transform:translateY(1.6rem) scale(.9);pointer-events:none}
 .card.l1 *,.card.l2 *{visibility:hidden}
@@ -220,9 +220,11 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .card .foot{display:flex;justify-content:space-between;align-items:center;gap:.6rem;color:var(--muted);font-size:.95rem}
 .report{background:none;border:0;color:var(--muted);font-size:.88rem;text-decoration:underline;padding:.6rem 0 .6rem .6rem}
 .report.confirm{color:var(--red);font-weight:700;text-decoration:none}
-.stamp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:.7rem;font-family:var(--f-title);font-size:1.7rem;color:#fff;background:rgba(157,19,40,.93);opacity:0;pointer-events:none;border-radius:inherit}
-.stamp .ic{width:2rem;height:2rem}
-.stamp.skip{background:rgba(52,48,58,.92)}
+.stamp{position:absolute;inset:0;border-radius:inherit;border:3px solid var(--red);background:rgba(157,19,40,.07);opacity:0;pointer-events:none;z-index:2}
+.stamp b{position:absolute;left:50%;top:-1.15rem;transform:translateX(-50%);display:flex;align-items:center;gap:.5rem;white-space:nowrap;background:var(--red);color:#fff;font-family:var(--f-title);font-weight:400;font-size:1.25rem;padding:.45rem 1.1rem;border-radius:.5rem;box-shadow:0 6px 18px rgba(157,19,40,.35)}
+.stamp .emo{font-size:1.3rem}
+.stamp.skip{border-color:#4a4650;background:rgba(52,48,58,.06)}
+.stamp.skip b{background:#4a4650;box-shadow:0 6px 18px rgba(52,48,58,.3)}
 #halo{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 38%,rgba(157,19,40,.22),transparent 62%);z-index:30}
 #halo.on{animation:halo .9s ease}
 @keyframes halo{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
@@ -602,7 +604,7 @@ nav.tabs .e{font-size:1.4rem}
     rb.onclick = (e) => { e.stopPropagation(); if (rb.classList.contains("confirm")) { signaler(i.id); return; }
       rb.classList.add("confirm"); rb.textContent = "Confirmer le signalement ?"; setTimeout(() => { rb.classList.remove("confirm"); rb.textContent = "Signaler"; }, 4000); };
     foot.append(who, rb);
-    const s1 = el("span", "stamp", IC("hands") + "Je prie pour vous"), s2 = el("span", "stamp skip", "Suivante");
+    const s1 = el("span", "stamp", "<b>" + IC("hands") + " Je prie pour vous</b>"), s2 = el("span", "stamp skip", "<b>Suivante</b>");
     c.append(head, txt, foot, s1, s2); return c;
   }
   function renderDeck() {
@@ -640,7 +642,7 @@ nav.tabs .e{font-size:1.4rem}
     let x0 = null, dx = 0, id = null, t0 = 0, vx = 0, tPrev = 0, xPrev = 0;
     const [oui, non] = card.querySelectorAll(".stamp"); const pill = card.querySelector(".count"), nn = pill && pill.querySelector(".n"), base = nn ? Number(nn.textContent) || 0 : 0;
     const preview = (p) => { if (!pill) return; pill.style.transform = p > 0 ? "scale(" + (1 + p * .4) + ")" : ""; const h = p > .55; pill.classList.toggle("hot", h); nn.textContent = h ? base + 1 : base; }; const suivante = $("deck").children[$("deck").children.length - 2];
-    card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "back"); });
+    card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort"); });
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
       const dt = e.timeStamp - tPrev; if (dt > 0) { vx = (e.clientX - xPrev) / dt; tPrev = e.timeStamp; xPrev = e.clientX; }
@@ -652,7 +654,7 @@ nav.tabs .e{font-size:1.4rem}
       if (x0 === null) return; x0 = null; dragging = false;
       if (dx > 90 || (dx > 30 && vx > 0.6)) prier(card.dataset.id, card);
       else if (dx < -90 || (dx < -30 && vx < -0.6)) passer(card);
-      else { preview(0); card.classList.add("anim", "back"); card.style.transform = ""; oui.style.opacity = non.style.opacity = 0; if (suivante) suivante.style.transform = ""; signature = ""; }
+      else { preview(0); card.classList.add("anim", "ressort"); card.style.transform = ""; oui.style.opacity = non.style.opacity = 0; if (suivante) suivante.style.transform = ""; signature = ""; }
     };
     card.addEventListener("pointerup", fin); card.addEventListener("pointercancel", fin);
   }
@@ -666,11 +668,10 @@ nav.tabs .e{font-size:1.4rem}
     card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
     const i = par(id); if (!S.db) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
     S.deja.add(id); ecrire("prie", [...S.deja]); if (i) i.prieres = (i.prieres || 0) + 1;
-    const pill = card.querySelector(".count"); card.classList.add("anim", "back"); card.style.transform = ""; card.querySelectorAll(".stamp")[0].style.opacity = .93;
+    const pill = card.querySelector(".count"); card.classList.add("anim", "ressort"); card.style.transform = ""; card.querySelectorAll(".stamp")[0].style.opacity = 1;
     if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
     setTimeout(() => { envoler(card, 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 320); }, 1000);
-    toast("Merci pour votre prière");
     try { await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   async function signaler(id) {
