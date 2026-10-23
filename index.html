@@ -84,9 +84,10 @@
 html{font-size:112.5%;-webkit-text-size-adjust:100%}
 html.grand{font-size:131%}
 html,body{height:100%;margin:0}
+@supports (height:100dvh){html,body{height:100dvh}}
 body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.5;overflow:hidden}
 button,input,textarea{font:inherit;color:inherit}
-button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 [hidden]{display:none!important}
 img{max-width:100%}
 :focus-visible{outline:3px solid var(--blue);outline-offset:3px;border-radius:8px}
@@ -107,7 +108,6 @@ nav.tabs .ic{width:1.35rem;height:1.35rem}
 .half small{letter-spacing:.02em}
 .micbig .ic{width:2rem;height:2rem}
 .iconbtn .ic{width:1.5rem;height:1.5rem}
-.count .ic{width:1.6rem;height:1.6rem}
 .count{position:relative;transform-origin:100% 50%;transition:transform .2s ease,background .2s,color .2s}
 .card .head{position:relative;z-index:3}
 .count.hot{background:#fff!important;color:var(--red);border-color:#fff}
@@ -159,9 +159,22 @@ h3{font-size:1.3rem}
 .grotte b{color:var(--blue)}
 
 /* Pile de cartes */
+.emo{font-style:normal;font-size:1.2em;line-height:1;display:inline-block;font-family:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif}
+nav.tabs .emo{font-size:1.35rem}
+.half .emo{font-size:2.6rem;margin-bottom:.4rem}
+.count .emo{font-size:1.45rem}
+.stamp .emo{font-size:2rem}
+.progress{display:none!important}
+main:has(#v-prier:not([hidden])){overflow:hidden;padding-bottom:.9rem}
+#v-prier{height:100%;min-height:0!important}
+.deck{min-height:0!important}
+.actions,.titrerow,.grotte{flex-shrink:0}
+@media (max-height:780px){#bandeau{display:none!important}main{padding-top:.8rem}}
+@media (max-height:640px){.card .text{font-size:1.3rem}.card{padding:1.1rem 1.1rem .8rem}header.top .logo{height:2.3rem}header.top{padding-top:.5rem;padding-bottom:.45rem}.big{min-height:3.4rem}.rbtn{width:3.4rem;height:3.4rem}nav.tabs button{min-height:2.8rem!important}}
 main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 #v-prier{flex:1;min-height:0;gap:.8rem}
-.actions{display:flex;gap:.8rem;align-items:center}
+.actions{display:flex;gap:.7rem;align-items:center}
+.actions .big{flex:1;width:auto;min-width:0;white-space:nowrap}
 .rbtn{flex-shrink:0;width:3.9rem;height:3.9rem;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--muted);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(23,21,26,.08);transition:transform .15s,background .2s}
 .rbtn:active{transform:scale(.92);background:var(--soft)}
 .rbtn .ic{width:1.5rem;height:1.5rem}
@@ -169,6 +182,7 @@ main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 @keyframes viewIn{from{opacity:0;transform:translateY(14px)}}
 .view:not([hidden]){animation:viewIn .45s cubic-bezier(.2,.8,.2,1) both}
 @keyframes promote{from{transform:translateY(.8rem) scale(.95)}}
+.card,.card *{touch-action:pan-y}
 .card.promote{animation:promote .42s cubic-bezier(.2,.9,.3,1)}
 .card.anim.back{transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
 nav.tabs{position:relative;gap:0!important;margin:.4rem max(1rem,env(safe-area-inset-right,0px)) max(.8rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));padding:.3rem!important;background:var(--soft)!important;border:0!important;border-radius:.9rem}
@@ -191,7 +205,7 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 #v-prier{min-height:100%}
 .deck{position:relative;flex:1;min-height:16rem;perspective:1000px}
 .card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;box-shadow:var(--shadow);padding:1.4rem 1.3rem 1.1rem;display:flex;flex-direction:column;gap:.9rem;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;transform-origin:50% 100%}
-.card.l1{transform:translateY(.8rem) scale(.95);pointer-events:none}
+.card.l1{transform:translateY(.55rem) scale(.95);pointer-events:none}
 .card.l2{transform:translateY(1.6rem) scale(.9);pointer-events:none}
 .card.l1 *,.card.l2 *{visibility:hidden}
 .card.anim{transition:transform .34s cubic-bezier(.2,.8,.2,1),opacity .34s ease}
@@ -224,7 +238,14 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 main:has(#v-ecrire:not([hidden])){display:flex;flex-direction:column}
 #v-ecrire{flex:1 0 auto;gap:.6rem}
-.page{flex:1;display:flex;flex-direction:column;gap:.7rem;min-height:26rem}
+.page{flex:1;display:flex;flex-direction:column;gap:.5rem;min-height:0}
+.metarow{display:flex;justify-content:space-between;align-items:center;gap:.6rem;color:var(--muted);font-size:.9rem}
+.metarow p{margin:0}
+.sendrow{display:flex;gap:.7rem;align-items:center}
+.sendrow .big{flex:1;width:auto;min-width:0}
+.sendrow .micbig{flex-shrink:0;width:3.9rem;height:3.9rem}
+.sendrow .micbig .ic{width:1.6rem;height:1.6rem}
+textarea{min-height:5rem!important}
 .dock{display:flex;flex-direction:column;gap:.5rem;align-items:stretch}
 .miczone{display:flex;flex-direction:column;align-items:center;gap:.3rem;text-align:center}
 .micbig{width:4.6rem;height:4.6rem;border-radius:50%;border:0;background:var(--red);color:var(--red-ink);font-size:2rem;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(157,19,40,.35)}
@@ -237,7 +258,7 @@ textarea::placeholder{color:#b9b4bd}
 .chars{margin:0 .2rem;font-size:.85rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
 .opt{display:flex;gap:.9rem;align-items:center;border:2px solid var(--line);border-radius:.6rem;padding:.4rem .9rem;min-height:3rem;cursor:pointer;background:var(--bg)}
 .opt input{width:1.9rem;height:1.9rem;flex-shrink:0;margin:0;accent-color:var(--red)}
-.opt b{display:block;line-height:1.25}
+.opt b{display:block;line-height:1.25;font-size:1rem}
 .opt small{display:block;color:var(--muted);font-size:.88rem;line-height:1.35;margin-top:.1rem}
 .opt:has(input:checked){border-color:var(--red);background:var(--red-soft)}
 input[type="text"],input[type="password"]{width:100%;border:2px solid var(--ink);background:var(--surface);border-radius:.6rem;padding:.9rem 1rem;min-height:3.7rem}
@@ -292,9 +313,9 @@ nav.tabs .e{font-size:1.4rem}
 .priere{font-family:var(--f-title);font-size:1.3rem;line-height:1.6}
 .welcome li{margin:.35rem 0}
 
-.toast{position:absolute;left:50%;top:calc(4.6rem + env(safe-area-inset-top,0px));transform:translateX(-50%) translateY(-1rem);background:var(--ink);color:var(--bg);padding:.75rem 1.2rem;border-radius:.4rem;font-weight:700;font-size:1rem;opacity:0;transition:.25s;pointer-events:none;width:max-content;max-width:calc(100% - 2rem);text-align:center;z-index:70}
+.toast{position:absolute;left:50%;bottom:calc(5.6rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(1rem);background:var(--ink);color:var(--bg);padding:.75rem 1.2rem;border-radius:.4rem;font-weight:700;font-size:1rem;opacity:0;transition:.25s;pointer-events:none;width:max-content;max-width:calc(100% - 2rem);text-align:center;z-index:70}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-@media (min-width:640px) and (min-height:640px){.toast{top:6.4rem}}
+@media (min-width:640px) and (min-height:640px){.toast{bottom:7.4rem}}
 
 /* Ouverture et accueil en deux moitiés */
 #splash{position:absolute;inset:0;z-index:90;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;text-align:center;animation:splashOut .9s ease 2.3s forwards;cursor:pointer}
@@ -347,19 +368,14 @@ nav.tabs .e{font-size:1.4rem}
   <main id="main" tabindex="-1">
     <!-- PRIER -->
     <section class="view" id="v-prier" aria-labelledby="h-prier">
-      <div class="titrerow">
-        <div>
-          <h2 id="h-prier">Prions ensemble</h2>
-          <p class="lead">Glissez à droite pour prier, à gauche pour passer.</p>
-        </div>
-        <button class="iconbtn" id="aideBtn" type="button" aria-label="Prières pour m'aider" title="Prières pour m'aider"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></button>
-      </div>
+      <h2 id="h-prier" class="sr">Prions ensemble</h2>
       <div class="grotte" id="bandeau" hidden><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#grotte"/></svg><span id="grotteTxt"></span></div>
       <div class="progress" id="progress" aria-hidden="true"></div>
       <div class="deck" id="deck" aria-live="polite"></div>
       <div class="actions" id="actions" hidden>
         <button class="rbtn" id="skipBtn" type="button" aria-label="Passer"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
-        <button class="big primary" id="prayBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg> J'ai prié</button>
+        <button class="big primary" id="prayBtn" type="button"><span class="emo" aria-hidden="true">🙏</span> J'ai prié</button>
+        <button class="rbtn" id="aideBtn" type="button" aria-label="Prières pour m'aider" title="Prières pour m'aider"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></button>
       </div>
       <p class="hint sr" id="deckHint"></p>
     </section>
@@ -370,12 +386,8 @@ nav.tabs .e{font-size:1.4rem}
       <form id="form" novalidate class="page">
         <label class="sr" for="texte">Votre intention</label>
         <textarea id="texte" maxlength="500" placeholder="Écrivez votre intention…"></textarea>
-        <p class="chars" id="chars">0 / 500</p>
+        <div class="metarow"><p id="micHelp">Touchez le micro pour dicter</p><p class="chars" id="chars">0 / 500</p></div>
         <div class="dock">
-          <div class="miczone" id="micZone">
-            <button class="micbig" id="micBtn" type="button" aria-label="Commencer la dictée"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></button>
-            <p id="micHelp">Touchez le micro pour dicter</p>
-          </div>
           <label class="opt" for="lourdesChk">
             <input type="checkbox" id="lourdesChk">
             <div><b>Déposer à la Grotte de Lourdes</b></div>
@@ -386,7 +398,10 @@ nav.tabs .e{font-size:1.4rem}
           </label>
           <input type="text" id="prenom" maxlength="40" placeholder="Votre prénom" autocomplete="given-name" aria-label="Votre prénom" hidden>
           <div class="notice" id="formNotice" role="alert" hidden></div>
-          <button class="big primary" id="sendBtn" type="submit">Envoyer mon intention</button>
+          <div class="sendrow">
+            <button class="micbig" id="micBtn" type="button" aria-label="Commencer la dictée"><svg class="ic" aria-hidden="true"><use href="#i-mic"/></svg></button>
+            <button class="big primary" id="sendBtn" type="submit">Envoyer</button>
+          </div>
         </div>
       </form>
       <div class="minebox" id="mine" hidden>
@@ -405,7 +420,7 @@ nav.tabs .e{font-size:1.4rem}
       <h2 id="h-merci">Votre intention est confiée</h2>
       <p class="lead" id="merciLead"></p>
       <p class="quote" id="merciTexte"></p>
-      <button class="big primary" type="button" id="merciPrier"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg> Prier pour les autres</button>
+      <button class="big primary" type="button" id="merciPrier"><span class="emo" aria-hidden="true">🙏</span> Prier pour les autres</button>
       <button class="big outline" type="button" id="merciPartage">Partager l'application</button>
       <button class="linkbtn" type="button" id="merciEcrire">Écrire une autre intention</button>
     </section>
@@ -435,12 +450,12 @@ nav.tabs .e{font-size:1.4rem}
   </main>
 
   <nav class="tabs" data-sel="prier" role="tablist" aria-label="Écrans">
-    <button role="tab" aria-selected="true" data-v="prier" type="button"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg>Prier</button>
+    <button role="tab" aria-selected="true" data-v="prier" type="button"><span class="emo" aria-hidden="true">🙏</span>Prier</button>
     <button role="tab" aria-selected="false" data-v="ecrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg>Écrire</button>
   </nav>
 
   <div id="home" hidden>
-    <button class="half prier" id="homePrier" type="button"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg><b>Prier</b><small>Lire les intentions et prier pour elles</small></button>
+    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>Lire les intentions et prier pour elles</small></button>
     <button class="half ecrire" id="homeEcrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><b>Écrire</b><small>Confier votre intention</small></button>
     <div class="seal" aria-hidden="true"><img data-logo alt=""></div>
     <button class="iconbtn homesize js-size" type="button" aria-pressed="false" aria-label="Agrandir le texte">A+</button>
@@ -466,7 +481,7 @@ nav.tabs .e{font-size:1.4rem}
 (() => {
   const $ = (id) => document.getElementById(id);
   const LOGO = $("logoImg").src;
-  const IC = (n) => '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
+  const IC = (n) => n === "hands" ? '<span class="emo" aria-hidden="true">🙏</span>' : '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
   const S = { items: [], loaded: false, erreur: false, deja: new Set(), signales: new Set(), passees: new Set(),
     uid: null, admin: false, selection: new Set(), db: false };
   const lire = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
@@ -719,7 +734,7 @@ nav.tabs .e{font-size:1.4rem}
       $("merciLead").textContent = lourdes ? "Merci. D'autres personnes vont prier pour vous, et elle sera déposée à la Grotte de Lourdes." : "Merci. D'autres personnes vont prier pour vous.";
       show("merci"); vibre(40);
     } catch (x) { err("L'intention n'a pas pu être envoyée. Vérifiez la connexion et réessayez."); }
-    finally { btn.disabled = false; btn.textContent = "Envoyer mon intention"; }
+    finally { btn.disabled = false; btn.textContent = "Envoyer"; }
   });
 
   function renderMine() {
