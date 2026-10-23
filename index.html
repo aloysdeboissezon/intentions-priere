@@ -107,7 +107,18 @@ nav.tabs .ic{width:1.35rem;height:1.35rem}
 .half small{letter-spacing:.02em}
 .micbig .ic{width:2rem;height:2rem}
 .iconbtn .ic{width:1.5rem;height:1.5rem}
-.count .ic{width:1.15rem;height:1.15rem;color:var(--red)}
+.count .ic{width:1.6rem;height:1.6rem}
+.count{position:relative;transform-origin:100% 50%;transition:transform .2s ease,background .2s,color .2s}
+.card .head{position:relative;z-index:3}
+.count.hot{background:#fff!important;color:var(--red);border-color:#fff}
+.count.hot .ic{animation:wiggle .5s ease-in-out infinite}
+@keyframes wiggle{25%{transform:rotate(-14deg) scale(1.15)}75%{transform:rotate(14deg) scale(1.15)}}
+.count.fire{animation:fire .85s cubic-bezier(.2,.9,.3,1.2)}
+.count.fire .n{display:inline-block;animation:roll .5s .15s cubic-bezier(.2,.9,.3,1.3) both}
+@keyframes fire{0%{transform:scale(1.4)}35%{transform:scale(1.75) rotate(-5deg)}70%{transform:scale(1.5) rotate(3deg)}100%{transform:scale(1.4)}}
+@keyframes roll{from{transform:translateY(.9em);opacity:0}}
+.count .plus{position:absolute;right:.4rem;top:-.4rem;font-weight:700;font-size:1rem;color:#fff;pointer-events:none;animation:plus .9s ease-out forwards}
+@keyframes plus{from{opacity:0;transform:translateY(0)}20%{opacity:1}to{opacity:0;transform:translateY(-1.6rem)}}
 .count{background:transparent!important;border:1.5px solid var(--line);font-weight:600!important}
 .big{letter-spacing:.01em;box-shadow:none}
 nav.tabs button{letter-spacing:.04em;text-transform:uppercase;font-size:.95rem!important}
@@ -148,14 +159,38 @@ h3{font-size:1.3rem}
 .grotte b{color:var(--blue)}
 
 /* Pile de cartes */
+main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
+#v-prier{flex:1;min-height:0;gap:.8rem}
+.actions{display:flex;gap:.8rem;align-items:center}
+.rbtn{flex-shrink:0;width:3.9rem;height:3.9rem;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--muted);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(23,21,26,.08);transition:transform .15s,background .2s}
+.rbtn:active{transform:scale(.92);background:var(--soft)}
+.rbtn .ic{width:1.5rem;height:1.5rem}
+.big:active{transform:scale(.97)}
+@keyframes viewIn{from{opacity:0;transform:translateY(14px)}}
+.view:not([hidden]){animation:viewIn .45s cubic-bezier(.2,.8,.2,1) both}
+@keyframes promote{from{transform:translateY(.8rem) scale(.95)}}
+.card.promote{animation:promote .42s cubic-bezier(.2,.9,.3,1)}
+.card.anim.back{transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
+nav.tabs{position:relative;gap:0!important;margin:.4rem max(1rem,env(safe-area-inset-right,0px)) max(.8rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));padding:.3rem!important;background:var(--soft)!important;border:0!important;border-radius:.9rem}
+nav.tabs::before{content:"";position:absolute;top:.3rem;bottom:.3rem;left:.3rem;width:calc(50% - .3rem);background:var(--red);border-radius:.65rem;box-shadow:0 4px 14px rgba(157,19,40,.35);transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
+nav.tabs[data-sel="ecrire"]::before{transform:translateX(100%)}
+nav.tabs button{position:relative;z-index:1;border:0!important;background:transparent!important;min-height:3.2rem!important;color:var(--muted);transition:color .25s}
+nav.tabs button[aria-selected="true"]{background:transparent!important;color:#fff!important}
+#home.leave{background:transparent;pointer-events:none}
+#home.leave .half.prier{animation:outTop .45s cubic-bezier(.7,0,.3,1) forwards}
+#home.leave .half.ecrire{animation:outBottom .45s cubic-bezier(.7,0,.3,1) forwards}
+#home.leave .seal,#home.leave .homesize{animation:sealOut .25s ease forwards}
+@keyframes outTop{to{transform:translateY(-100%)}}
+@keyframes outBottom{to{transform:translateY(100%)}}
+@keyframes sealOut{to{opacity:0;transform:scale(.4)}}
 .titrerow{display:flex;align-items:flex-start;justify-content:space-between;gap:.8rem}
 .titrerow .iconbtn{font-size:1.4rem;margin-top:.2rem}
 .progress{display:flex;justify-content:center;gap:.4rem;min-height:.5rem}
 .progress i{width:.5rem;height:.5rem;border-radius:50%;background:var(--line)}
 .progress i.on{background:var(--red)}
 #v-prier{min-height:100%}
-.deck{position:relative;flex:1;min-height:14rem;max-height:30rem;perspective:1000px}
-.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--line);border-radius:.6rem;box-shadow:var(--shadow);padding:1.25rem;display:flex;flex-direction:column;gap:.9rem;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;transform-origin:50% 100%}
+.deck{position:relative;flex:1;min-height:16rem;perspective:1000px}
+.card{position:absolute;inset:0;background:var(--surface);border:1px solid var(--line);border-radius:1rem;box-shadow:var(--shadow);padding:1.4rem 1.3rem 1.1rem;display:flex;flex-direction:column;gap:.9rem;overflow:hidden;touch-action:pan-y;user-select:none;-webkit-user-select:none;will-change:transform;transform-origin:50% 100%}
 .card.l1{transform:translateY(.8rem) scale(.95);pointer-events:none}
 .card.l2{transform:translateY(1.6rem) scale(.9);pointer-events:none}
 .card.l1 *,.card.l2 *{visibility:hidden}
@@ -167,12 +202,13 @@ h3{font-size:1.3rem}
 .count .e{font-size:1.45rem;line-height:1}
 .count.pop{animation:pop .5s ease}
 @keyframes pop{30%{transform:scale(1.25);background:var(--red-soft)}100%{transform:scale(1)}}
-.card .text{font-family:var(--f-title);font-size:1.4rem;line-height:1.42;flex:1;min-height:0;overflow-y:auto;overflow-wrap:anywhere;-webkit-mask-image:linear-gradient(#000 calc(100% - 1.4rem),transparent);mask-image:linear-gradient(#000 calc(100% - 1.4rem),transparent);padding-bottom:1.2rem}
+.card .text{font-family:var(--f-title);font-size:1.6rem;line-height:1.42;flex:1;min-height:0;overflow-y:auto;overflow-wrap:anywhere;-webkit-mask-image:linear-gradient(#000 calc(100% - 1.4rem),transparent);mask-image:linear-gradient(#000 calc(100% - 1.4rem),transparent);padding-bottom:1.2rem}
 .card .foot{display:flex;justify-content:space-between;align-items:center;gap:.6rem;color:var(--muted);font-size:.95rem}
 .report{background:none;border:0;color:var(--muted);font-size:.88rem;text-decoration:underline;padding:.6rem 0 .6rem .6rem}
 .report.confirm{color:var(--red);font-weight:700;text-decoration:none}
-.stamp{position:absolute;top:1.1rem;left:50%;transform:translateX(-50%) rotate(-5deg);font-weight:700;font-size:1.25rem;padding:.35rem 1rem;border-radius:.8rem;border:3px solid var(--ok);color:var(--ok);background:var(--surface);opacity:0;pointer-events:none;white-space:nowrap}
-.stamp.skip{border-color:var(--muted);color:var(--muted)}
+.stamp{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:.7rem;font-family:var(--f-title);font-size:1.7rem;color:#fff;background:rgba(157,19,40,.93);opacity:0;pointer-events:none;border-radius:inherit}
+.stamp .ic{width:2rem;height:2rem}
+.stamp.skip{background:rgba(52,48,58,.92)}
 #halo{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 38%,rgba(157,19,40,.22),transparent 62%);z-index:30}
 #halo.on{animation:halo .9s ease}
 @keyframes halo{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
@@ -292,10 +328,11 @@ nav.tabs .e{font-size:1.4rem}
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <symbol id="i-hands" viewBox="0 0 24 24"><path d="M12 3.2L6.8 9.6C6 10.6 5.6 11.6 5.6 13v2.4L8.4 20.8h3.6zM12 3.2l5.2 6.4c.8 1 1.2 2 1.2 3.4v2.4l-2.8 5.4H12M9.4 13.6l-1.8-1.4M14.6 13.6l1.8-1.4"/></symbol>
+  <symbol id="i-hands" viewBox="0 0 24 24"><text x="12" y="19.2" font-size="19" text-anchor="middle" fill="#000" stroke="none" stroke-width="0">🙏</text></symbol>
   <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1-4.2L16.2 4.6a1.6 1.6 0 0 1 2.2 0l1 1a1.6 1.6 0 0 1 0 2.2L8.2 19z M14.5 6.3l3.2 3.2"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M3.5 5.5h6A2.5 2.5 0 0 1 12 8v11.5a2.5 2.5 0 0 0-2.5-2.5h-6zM20.5 5.5h-6A2.5 2.5 0 0 0 12 8v11.5a2.5 2.5 0 0 1 2.5-2.5h6z"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
   <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor"/></symbol>
   <symbol id="grotte" viewBox="0 0 100 100"><path d="M12 90 V52 C12 26 30 10 50 10 C70 10 88 26 88 52 V90" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path d="M50 30 l4 10 h10 l-8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 h10 z" fill="currentColor"/><path d="M34 90 V72 a16 16 0 0 1 32 0 V90" fill="none" stroke="currentColor" stroke-width="5"/></symbol>
 </svg>
@@ -313,15 +350,15 @@ nav.tabs .e{font-size:1.4rem}
       <div class="titrerow">
         <div>
           <h2 id="h-prier">Prions ensemble</h2>
-          <p class="lead">Priez, puis glissez à droite.</p>
+          <p class="lead">Glissez à droite pour prier, à gauche pour passer.</p>
         </div>
         <button class="iconbtn" id="aideBtn" type="button" aria-label="Prières pour m'aider" title="Prières pour m'aider"><svg class="ic" aria-hidden="true"><use href="#i-book"/></svg></button>
       </div>
       <div class="grotte" id="bandeau" hidden><svg viewBox="0 0 100 100" aria-hidden="true"><use href="#grotte"/></svg><span id="grotteTxt"></span></div>
       <div class="progress" id="progress" aria-hidden="true"></div>
       <div class="deck" id="deck" aria-live="polite"></div>
-      <div class="row2" id="actions" hidden>
-        <button class="big outline" id="skipBtn" type="button">Passer</button>
+      <div class="actions" id="actions" hidden>
+        <button class="rbtn" id="skipBtn" type="button" aria-label="Passer"><svg class="ic" aria-hidden="true"><use href="#i-x"/></svg></button>
         <button class="big primary" id="prayBtn" type="button"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg> J'ai prié</button>
       </div>
       <p class="hint sr" id="deckHint"></p>
@@ -397,7 +434,7 @@ nav.tabs .e{font-size:1.4rem}
     </section>
   </main>
 
-  <nav class="tabs" role="tablist" aria-label="Écrans">
+  <nav class="tabs" data-sel="prier" role="tablist" aria-label="Écrans">
     <button role="tab" aria-selected="true" data-v="prier" type="button"><svg class="ic" aria-hidden="true"><use href="#i-hands"/></svg>Prier</button>
     <button role="tab" aria-selected="false" data-v="ecrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg>Écrire</button>
   </nav>
@@ -459,7 +496,7 @@ nav.tabs .e{font-size:1.4rem}
     vue = v;
     ["prier", "ecrire", "merci", "benevoles"].forEach((k) => { $("v-" + k).hidden = k !== v; });
     const tab = v === "prier" ? "prier" : "ecrire";
-    document.querySelectorAll("nav.tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.v === tab)));
+    document.querySelectorAll("nav.tabs button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.v === tab))); document.querySelector("nav.tabs").dataset.sel = tab;
     $("main").scrollTop = 0;
     if (v === "benevoles") renderBenevoles();
   }
@@ -480,8 +517,9 @@ nav.tabs .e{font-size:1.4rem}
 
   // ---------- Ouverture et accueil ----------
   document.querySelectorAll("img[data-logo]").forEach((i) => { i.src = LOGO; });
-  function accueil() { $("home").hidden = false; $("homePrier").focus({ preventScroll: true }); }
-  function entrer(v) { $("home").hidden = true; show(v); }
+  let tRideau = 0;
+  function accueil() { clearTimeout(tRideau); $("home").classList.remove("leave"); $("home").hidden = false; $("homePrier").focus({ preventScroll: true }); }
+  function entrer(v) { const h = $("home"); h.classList.add("leave"); show(v); clearTimeout(tRideau); tRideau = setTimeout(() => { h.hidden = true; h.classList.remove("leave"); }, 440); }
   $("homePrier").onclick = () => entrer("prier");
   $("homeEcrire").onclick = () => { entrer("ecrire"); };
   $("homeBtn").onclick = accueil;
@@ -549,7 +587,7 @@ nav.tabs .e{font-size:1.4rem}
     rb.onclick = (e) => { e.stopPropagation(); if (rb.classList.contains("confirm")) { signaler(i.id); return; }
       rb.classList.add("confirm"); rb.textContent = "Confirmer le signalement ?"; setTimeout(() => { rb.classList.remove("confirm"); rb.textContent = "Signaler"; }, 4000); };
     foot.append(who, rb);
-    const s1 = el("span", "stamp", "J'ai prié"), s2 = el("span", "stamp skip", "Suivante");
+    const s1 = el("span", "stamp", IC("hands") + "Je prie pour vous"), s2 = el("span", "stamp skip", "Suivante");
     c.append(head, txt, foot, s1, s2); return c;
   }
   function renderDeck() {
@@ -557,7 +595,7 @@ nav.tabs .e{font-size:1.4rem}
     const sig = [S.loaded, S.erreur, S.passees.size, ...top3.map((i) => i.id + ":" + i.prieres)].join("|");
     renderGrotte(); renderMine();
     if (dragging || sig === signature) return; signature = sig;
-    const deck = $("deck"); deck.innerHTML = "";
+    const deck = $("deck"); const avant = deck.children.length > 1 ? deck.children[deck.children.length - 2].dataset.id : null; deck.innerHTML = "";
     $("actions").hidden = top3.length === 0; $("deckHint").textContent = "";
     const prog = $("progress"); prog.innerHTML = "";
     if (!S.loaded) { deck.append(el("div", "skel")); return; }
@@ -576,6 +614,7 @@ nav.tabs .e{font-size:1.4rem}
     top3.slice().reverse().forEach((i, k, arr) => deck.append(carte(i, arr.length - 1 - k)));
     const n = Math.min(q.length, 7); for (let k = 0; k < n; k++) prog.append(el("i", k === 0 ? "on" : ""));
     $("deckHint").textContent = q.length === 1 ? "C'est la dernière intention" : q.length + " intentions vous attendent";
+    if (avant && deck.lastElementChild.dataset.id === avant) deck.lastElementChild.classList.add("promote");
     bindDrag(deck.lastElementChild);
   }
   function renderGrotte() {
@@ -584,20 +623,21 @@ nav.tabs .e{font-size:1.4rem}
   }
   function bindDrag(card) {
     let x0 = null, dx = 0, id = null, t0 = 0, vx = 0, tPrev = 0, xPrev = 0;
-    const [oui, non] = card.querySelectorAll(".stamp"); const suivante = $("deck").children[$("deck").children.length - 2];
-    card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim"); });
+    const [oui, non] = card.querySelectorAll(".stamp"); const pill = card.querySelector(".count"), nn = pill && pill.querySelector(".n"), base = nn ? Number(nn.textContent) || 0 : 0;
+    const preview = (p) => { if (!pill) return; pill.style.transform = p > 0 ? "scale(" + (1 + p * .4) + ")" : ""; const h = p > .55; pill.classList.toggle("hot", h); nn.textContent = h ? base + 1 : base; }; const suivante = $("deck").children[$("deck").children.length - 2];
+    card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "back"); });
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
       const dt = e.timeStamp - tPrev; if (dt > 0) { vx = (e.clientX - xPrev) / dt; tPrev = e.timeStamp; xPrev = e.clientX; }
       card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 22 + "deg)";
-      oui.style.opacity = Math.max(0, Math.min(1, dx / 90)); non.style.opacity = Math.max(0, Math.min(1, -dx / 90));
+      preview(Math.max(0, Math.min(1, dx / 110))); oui.style.opacity = Math.max(0, Math.min(1, (dx - 20) / 110)); non.style.opacity = Math.max(0, Math.min(1, (-dx - 20) / 110));
       if (suivante && suivante.classList.contains("l1")) suivante.style.transform = "translateY(" + (0.8 - Math.min(Math.abs(dx) / 150, 1) * 0.8) + "rem) scale(" + (0.95 + Math.min(Math.abs(dx) / 150, 1) * 0.05) + ")";
     });
     const fin = () => {
       if (x0 === null) return; x0 = null; dragging = false;
       if (dx > 90 || (dx > 30 && vx > 0.6)) prier(card.dataset.id, card);
       else if (dx < -90 || (dx < -30 && vx < -0.6)) passer(card);
-      else { card.classList.add("anim"); card.style.transform = ""; oui.style.opacity = non.style.opacity = 0; if (suivante) suivante.style.transform = ""; signature = ""; }
+      else { preview(0); card.classList.add("anim", "back"); card.style.transform = ""; oui.style.opacity = non.style.opacity = 0; if (suivante) suivante.style.transform = ""; signature = ""; }
     };
     card.addEventListener("pointerup", fin); card.addEventListener("pointercancel", fin);
   }
@@ -608,12 +648,13 @@ nav.tabs .e{font-size:1.4rem}
   function passer(card) { if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; envoler(card, -1); const id = card.dataset.id; setTimeout(() => { S.passees.add(id); dragging = false; signature = ""; renderDeck(); }, 300); }
 
   async function prier(id, card) {
-    card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1;
+    card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
     const i = par(id); if (!S.db) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
     S.deja.add(id); ecrire("prie", [...S.deja]); if (i) i.prieres = (i.prieres || 0) + 1;
-    const pill = card.querySelector(".count"); if (pill) { pill.querySelector(".n").textContent = i ? i.prieres : ""; pill.classList.add("pop"); }
+    const pill = card.querySelector(".count"); card.classList.add("anim", "back"); card.style.transform = ""; card.querySelectorAll(".stamp")[0].style.opacity = .93;
+    if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
-    setTimeout(() => { envoler(card, 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 320); }, 380);
+    setTimeout(() => { envoler(card, 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 320); }, 1000);
     toast("Merci pour votre prière");
     try { await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
