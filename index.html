@@ -208,6 +208,20 @@ main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 .card,.card *{touch-action:pan-y}
 .card.promote{animation:promote .42s cubic-bezier(.2,.9,.3,1)}
 .card.anim.ressort{transition:transform .38s cubic-bezier(.22,.61,.36,1)}
+.card.saint{background:linear-gradient(160deg,#fffdf8 0%,#fff 45%,#fbf3e2 100%);border:1px solid #d9b865;box-shadow:0 18px 44px -14px rgba(157,19,40,.28),0 0 0 4px rgba(217,184,101,.14);overflow:hidden;animation:saintIn 1.1s cubic-bezier(.16,.84,.3,1) both;text-align:center;align-items:center}
+.card.saint::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,236,170,.55),transparent);transform:skewX(-18deg);animation:saintSheen 4.2s ease-in-out 1s infinite;pointer-events:none}
+@keyframes saintIn{0%{opacity:0;transform:translateY(1.2rem) scale(.9);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none}}
+@keyframes saintSheen{0%,55%{left:-60%}100%{left:130%}}
+.card.saint .head{display:none!important}.card.saint{gap:.6rem;padding-top:1.2rem}
+.saint .chip{background:#fbf0d4;color:#7a5b10;border:1px solid #e6cd8c}
+.saint .emb{width:2.6rem;height:2.6rem;color:var(--red);flex:none;animation:emb 5s ease-in-out infinite}
+@keyframes emb{50%{transform:scale(1.08)}}
+.saint h3{margin:0;font-family:Marcellus,serif;font-size:1.4rem;line-height:1.2;color:var(--red-deep)}
+.saint .quand{margin:0;font-size:.95rem;color:#7a5b10;letter-spacing:.04em}
+.card.saint .text{font:400 1.08rem/1.45 "Atkinson Hyperlegible",system-ui,sans-serif;text-align:center;flex:1;display:block;overflow:auto;margin:0}
+@media (max-height:700px){.saint .emb{width:2.2rem;height:2.2rem}.saint h3{font-size:1.25rem}.card.saint .text{font-size:.98rem}}
+.saint .foot{justify-content:center;color:#7a5b10}
+@media (prefers-reduced-motion:reduce){.card.saint,.card.saint::after,.saint .emb{animation:none}}
 .card.glisse{transition:transform .5s cubic-bezier(.22,.61,.36,1),opacity .5s ease}
 nav.tabs{position:relative;gap:0!important;margin:.4rem max(1rem,env(safe-area-inset-right,0px)) max(.8rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));padding:.3rem!important;background:var(--soft)!important;border:0!important;border-radius:.9rem}
 nav.tabs::before{content:"";position:absolute;top:.3rem;bottom:.3rem;left:.3rem;width:calc(50% - .3rem);background:var(--red);border-radius:.65rem;box-shadow:0 4px 14px rgba(157,19,40,.35);transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
@@ -526,7 +540,7 @@ nav.tabs .e{font-size:1.4rem}
   const ecrire = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const FB = () => window.FB;
   const visibles = () => S.items.filter((i) => !i.masque);
-  const par = (id) => S.items.find((i) => i.id === id);
+  const par = (id) => (id === saintDuJour().id ? saintDuJour() : S.items.find((i) => i.id === id));
   const compte = (id) => (par(id) || {}).prieres || 0;
   const signale = (id) => (par(id) || {}).signalements || 0;
   const personnes = (n) => n === 0 ? "Soyez la première personne à prier" : n === 1 ? "1 personne a prié" : n + " personnes ont prié";
@@ -670,10 +684,57 @@ nav.tabs .e{font-size:1.4rem}
     else { entrer("ecrire"); show("benevoles"); }
   });
 
+  // ---------- Saints de l'Ordre : une carte spéciale par jour ----------
+  const SAINTS = [
+    ["01-03", "Bienheureux García Martínez", "Bienheureux García, frère hospitalier de l'Ordre, veillez sur ceux qui servent les malades dans le silence. Priez pour nos bénévoles et pour tous ceux qui se donnent sans compter."],
+    ["03-22", "Bienheureux Clemens August von Galen", "Bienheureux Clemens August, évêque courageux face à l'injustice, donnez-nous la force de défendre la dignité de chaque personne. Priez pour ceux qu'on réduit au silence."],
+    ["05-18", "Bienheureux Gérard Mecatti de Villamagna", "Bienheureux Gérard, pèlerin et serviteur des malades, accompagnez ceux qui marchent vers Lourdes et ceux qui ne peuvent plus marcher."],
+    ["05-23", "Bienheureux Vilmos Apor", "Bienheureux Vilmos, pasteur qui a protégé les plus faibles au péril de sa vie, priez pour les personnes menacées et pour ceux qui les défendent."],
+    ["05-28", "Sainte Ubaldesca", "Sainte Ubaldesca, hospitalière attentive aux souffrants, obtenez la douceur et la patience à tous ceux qui prennent soin d'un proche malade."],
+    ["06-12", "Sainte Fleur de Beaulieu", "Sainte Fleur, donnez-nous un cœur recueilli et fidèle. Priez pour les personnes seules et pour celles qui vivent dans la prière."],
+    ["06-19", "Bienheureux Gerland", "Bienheureux Gerland, humble serviteur de l'Ordre, priez pour ceux qui accueillent les pèlerins et les étrangers."],
+    ["06-24", "Saint Jean-Baptiste, patron de l'Ordre", "Saint Jean-Baptiste, patron de notre Ordre, vous qui avez préparé les chemins du Seigneur, aidez-nous à lui ouvrir nos cœurs et à servir nos frères les malades."],
+    ["07-01", "Saint Nicaise", "Saint Nicaise, témoin fidèle jusqu'au bout, soutenez ceux qui sont éprouvés dans leur foi et ceux qui sont persécutés à cause d'elle."],
+    ["07-08", "Bienheureux Adrian Fortescue", "Bienheureux Adrian, martyr fidèle à sa conscience, priez pour ceux qui doivent faire des choix difficiles et pour l'unité des chrétiens."],
+    ["07-12", "Bienheureux David Gunston", "Bienheureux David, martyr fidèle à l'Église, donnez-nous la persévérance dans les épreuves et le courage de rester fidèles."],
+    ["07-14", "Sainte Toscana", "Sainte Toscana, veuve et servante des pauvres, priez pour les personnes âgées, les veufs et les veuves, et pour ceux qui les visitent."],
+    ["07-17", "Saint Camille de Lellis", "Saint Camille, père des infirmiers et des malades, bénissez les soignants, les aidants et tous les malades de notre pèlerinage."],
+    ["08-29", "Passion de saint Jean-Baptiste", "Saint Jean-Baptiste, témoin de la vérité jusqu'au martyre, priez pour ceux qui souffrent pour la justice et pour la paix."],
+    ["08-30", "Bienheureux Alfred Ildefonse Schuster", "Bienheureux Alfred, pasteur humble et priant, priez pour nos prêtres, nos aumôniers et nos chapelains."],
+    ["09-23", "Saints Zacharie et Élisabeth", "Saints Zacharie et Élisabeth, parents de Jean-Baptiste, priez pour les familles, pour les couples qui attendent un enfant et pour ceux qui espèrent encore."],
+    ["09-24", "Saint Pio de Pietrelcina", "Saint Padre Pio, vous qui avez porté la souffrance avec amour, priez pour tous ceux qui souffrent dans leur corps ou dans leur cœur."],
+    ["10-05", "Bienheureux Pierre Pattarini d'Imola", "Bienheureux Pierre, serviteur des pauvres, priez pour ceux qui manquent de tout et pour ceux qui les aident."],
+    ["10-08", "Saint Hugues", "Saint Hugues, serviteur de l'Ordre, priez pour les membres de l'Ordre de Malte afin qu'ils demeurent fidèles à leur vocation de service."],
+    ["10-13", "Bienheureux Gérard, fondateur de l'Ordre", "Bienheureux Gérard, fondateur de notre Ordre, vous qui avez accueilli les pèlerins et les malades à Jérusalem, priez pour tous les membres de l'Hospitalité."],
+    ["10-21", "Bienheureux Charles d'Autriche", "Bienheureux Charles, artisan de paix et père de famille, priez pour les gouvernants, pour la paix dans le monde et pour nos familles."],
+  ];
+  const MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+  function saintDuJour() {
+    const d = new Date(), p = (n) => String(n).padStart(2, "0"), cle = p(d.getMonth() + 1) + "-" + p(d.getDate());
+    let k = SAINTS.findIndex((x) => x[0] === cle), fete = k >= 0;
+    if (!fete) k = Math.floor((d - new Date(d.getFullYear(), 0, 0)) / 864e5) % SAINTS.length;
+    const x = SAINTS[k], [m, j] = x[0].split("-").map(Number);
+    return { id: "saint-" + d.getFullYear() + "-" + cle, saint: true, nom: x[1], texte: x[2], fete, quand: fete ? "Fête aujourd'hui" : "Fête le " + (j === 1 ? "1er" : j) + " " + MOIS[m - 1], prieres: 0 };
+  }
+
   // ---------- Prier : pile de cartes ----------
-  const file = () => visibles().filter((i) => !i.lourdes && (S.revoir || !S.deja.has(i.id)) && !S.passees.has(i.id)).sort((a, b) => b.creeLe - a.creeLe);
+  const file = () => {
+    const q = visibles().filter((i) => !i.lourdes && (S.revoir || !S.deja.has(i.id)) && !S.passees.has(i.id)).sort((a, b) => b.creeLe - a.creeLe);
+    const sd = saintDuJour(); if (!S.deja.has(sd.id) && !S.passees.has(sd.id)) q.unshift(sd);
+    return q;
+  };
   let dragging = false, signature = "";
+  function carteSaint(i, niveau) {
+    const c = el("article", "card saint" + (niveau ? " l" + niveau : "")); c.dataset.id = i.id;
+    const head = el("div", "head"); head.append(el("span", "chip", "Intention du jour"));
+    const emb = el("div"); emb.innerHTML = '<svg class="emb" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-malte"/></svg>';
+    const h = el("h3", "", i.nom), q = el("p", "quand", i.quand);
+    const txt = el("div", "text"); txt.textContent = i.texte;
+    const foot = el("div", "foot"); foot.textContent = "Saints de l'Ordre de Malte";
+    c.append(head, emb.firstChild, h, q, txt, foot, el("span", "stamp")); return c;
+  }
   function carte(i, niveau) {
+    if (i.saint) return carteSaint(i, niveau);
     const c = el("article", "card" + (niveau ? " l" + niveau : "")); c.dataset.id = i.id;
     const head = el("div", "head");
     if (i.lourdes) head.append(el("span", "chip", "Grotte de Lourdes"));
@@ -753,12 +814,12 @@ nav.tabs .e{font-size:1.4rem}
 
   async function prier(id, card, dir) {
     card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
-    const i = par(id); if (!S.db) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
-    const nouvelle = !S.deja.has(id); S.passees.add(id); S.deja.add(id); ecrire("prie", [...S.deja]); if (i && nouvelle) i.prieres = (i.prieres || 0) + 1;
+    const i = par(id); if (!S.db && !(i && i.saint)) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
+    const nouvelle = !S.deja.has(id); S.passees.add(id); S.deja.add(id); ecrire("prie", [...S.deja]); if (i && nouvelle && !i.saint) i.prieres = (i.prieres || 0) + 1;
     const pill = card.querySelector(".count");     if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
     envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 520);
-    try { if (nouvelle) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
+    try { if (nouvelle && !(i && i.saint)) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   async function signaler(id) {
     if (!S.db) return; S.signales.add(id); ecrire("signales", [...S.signales]);
