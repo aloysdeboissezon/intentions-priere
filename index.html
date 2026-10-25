@@ -207,7 +207,8 @@ main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 @keyframes promote{from{transform:translateY(.8rem) scale(.95)}}
 .card,.card *{touch-action:pan-y}
 .card.promote{animation:promote .42s cubic-bezier(.2,.9,.3,1)}
-.card.anim.ressort{transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
+.card.anim.ressort{transition:transform .38s cubic-bezier(.22,.61,.36,1)}
+.card.glisse{transition:transform .5s cubic-bezier(.22,.61,.36,1),opacity .5s ease}
 nav.tabs{position:relative;gap:0!important;margin:.4rem max(1rem,env(safe-area-inset-right,0px)) max(.8rem,env(safe-area-inset-bottom,0px)) max(1rem,env(safe-area-inset-left,0px));padding:.3rem!important;background:var(--soft)!important;border:0!important;border-radius:.9rem}
 nav.tabs::before{content:"";position:absolute;top:.3rem;bottom:.3rem;left:.3rem;width:calc(50% - .3rem);background:var(--red);border-radius:.65rem;box-shadow:0 4px 14px rgba(157,19,40,.35);transition:transform .45s cubic-bezier(.3,1.25,.5,1)}
 nav.tabs[data-sel="ecrire"]::before{transform:translateX(100%)}
@@ -243,7 +244,7 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .card .foot{display:flex;justify-content:space-between;align-items:center;gap:.6rem;color:var(--muted);font-size:.95rem}
 .report{background:none;border:0;color:var(--muted);font-size:.88rem;text-decoration:underline;padding:.6rem 0 .6rem .6rem}
 .report.confirm{color:var(--red);font-weight:700;text-decoration:none}
-.stamp{position:absolute;inset:0;border-radius:inherit;border:3px solid var(--red);background:rgba(157,19,40,.07);opacity:0;pointer-events:none;z-index:2}
+.stamp{display:none}
 #halo{position:absolute;inset:0;pointer-events:none;opacity:0;background:radial-gradient(circle at 50% 38%,rgba(157,19,40,.22),transparent 62%);z-index:30}
 #halo.on{animation:halo .9s ease}
 @keyframes halo{0%{opacity:0}30%{opacity:1}100%{opacity:0}}
@@ -256,7 +257,7 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .empty p{margin:0;color:var(--muted)}
 .empty{touch-action:pan-y}
 .empty.anim{transition:transform .3s ease,opacity .3s}
-.empty.anim.ressort{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.empty.anim.ressort{transition:transform .38s cubic-bezier(.22,.61,.36,1)}
 .empty p.revoirhint{font-size:.9rem}
 
 /* Écrire : une page blanche, le micro en bas */
@@ -718,8 +719,8 @@ nav.tabs .e{font-size:1.4rem}
   function bindRevoir(box) {
     let x0 = null, dx = 0;
     box.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; box.setPointerCapture(e.pointerId); box.classList.remove("anim"); });
-    box.addEventListener("pointermove", (e) => { if (x0 === null) return; dx = e.clientX - x0; box.style.transform = "translateX(" + dx + "px) rotate(" + dx / 28 + "deg)"; });
-    const fin = () => { if (x0 === null) return; x0 = null; if (Math.abs(dx) > 80) { box.classList.add("anim"); box.style.transform = "translateX(" + (dx < 0 ? -140 : 140) + "%) rotate(" + (dx < 0 ? -14 : 14) + "deg)"; setTimeout(revoir, 260); } else { box.classList.add("anim", "ressort"); box.style.transform = ""; } };
+    box.addEventListener("pointermove", (e) => { if (x0 === null) return; dx = e.clientX - x0; box.style.transform = "translateX(" + dx + "px)"; });
+    const fin = () => { if (x0 === null) return; x0 = null; if (Math.abs(dx) > 80) { box.classList.add("anim"); box.style.transform = "translateX(" + (dx < 0 ? -120 : 120) + "%)"; setTimeout(revoir, 260); } else { box.classList.add("anim", "ressort"); box.style.transform = ""; } };
     box.addEventListener("pointerup", fin); box.addEventListener("pointercancel", fin);
   }
   function renderGrotte() { if (!$("bandeau")) return;
@@ -734,7 +735,7 @@ nav.tabs .e{font-size:1.4rem}
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
       const dt = e.timeStamp - tPrev; if (dt > 0) { vx = (e.clientX - xPrev) / dt; tPrev = e.timeStamp; xPrev = e.clientX; }
-      card.style.transform = "translateX(" + dx + "px) rotate(" + dx / 22 + "deg)";
+      card.style.transform = "translateX(" + dx + "px)";
       preview(Math.max(0, Math.min(1, Math.abs(dx) / 110))); oui.style.opacity = Math.max(0, Math.min(1, (Math.abs(dx) - 20) / 110));
       if (suivante && suivante.classList.contains("l1")) suivante.style.transform = "translateY(" + (0.8 - Math.min(Math.abs(dx) / 150, 1) * 0.8) + "rem) scale(" + (0.95 + Math.min(Math.abs(dx) / 150, 1) * 0.05) + ")";
     });
@@ -746,18 +747,17 @@ nav.tabs .e{font-size:1.4rem}
     card.addEventListener("pointerup", fin); card.addEventListener("pointercancel", fin);
   }
   function envoler(card, dir) {
-    card.classList.add("anim"); card.querySelector(".stamp").style.opacity = 1;
-    card.style.transform = "translateX(" + dir * 140 + "%) rotate(" + dir * 16 + "deg)"; card.style.opacity = "0";
+    card.classList.remove("anim", "ressort"); card.classList.add("glisse");
+    card.style.transform = "translateX(" + dir * 120 + "%)"; card.style.opacity = "0";
   }
 
   async function prier(id, card, dir) {
     card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
     const i = par(id); if (!S.db) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
     const nouvelle = !S.deja.has(id); S.passees.add(id); S.deja.add(id); ecrire("prie", [...S.deja]); if (i && nouvelle) i.prieres = (i.prieres || 0) + 1;
-    const pill = card.querySelector(".count"); card.classList.add("anim", "ressort"); card.style.transform = ""; card.querySelector(".stamp").style.opacity = 1;
-    if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
+    const pill = card.querySelector(".count");     if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
-    setTimeout(() => { envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 320); }, 1000);
+    envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 520);
     try { if (nouvelle) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   async function signaler(id) {
