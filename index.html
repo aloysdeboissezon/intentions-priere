@@ -335,6 +335,9 @@ nav.tabs .e{font-size:1.4rem}
 .sheet p{margin:0}
 .big.petit{min-height:2.8rem;font-size:1rem;width:auto;align-self:center;padding:.4rem 1.8rem}
 .sheet a{color:var(--red);font-weight:700}
+.sheet a.lienprière{display:flex;flex-direction:column;gap:.15rem;text-decoration:none;border:1.5px solid var(--line);border-radius:.6rem;padding:.9rem 1rem;color:var(--ink)}
+.sheet a.lienprière b{font-size:1.1rem}
+.sheet a.lienprière small{color:var(--red);font-weight:700;font-size:.9rem}
 .tabsrow{display:flex;gap:.5rem;flex-wrap:wrap}
 .tabsrow button{border:1.5px solid var(--line);background:var(--bg);border-radius:.4rem;padding:.55rem 1rem;font-weight:700;min-height:2.8rem}
 .tabsrow button[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
@@ -595,16 +598,13 @@ nav.tabs .e{font-size:1.4rem}
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !$("sheet").hidden) fermer(); });
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
-  const PRIERES = {
-    "Je vous salue Marie": "Je vous salue, Marie, pleine de grâce ; le Seigneur est avec vous. Vous êtes bénie entre toutes les femmes et Jésus, le fruit de vos entrailles, est béni. Sainte Marie, Mère de Dieu, priez pour nous, pauvres pécheurs, maintenant et à l'heure de notre mort. Amen.",
-    "Notre Père": "Notre Père, qui es aux cieux, que ton nom soit sanctifié, que ton règne vienne, que ta volonté soit faite sur la terre comme au ciel. Donne-nous aujourd'hui notre pain de ce jour. Pardonne-nous nos offenses, comme nous pardonnons aussi à ceux qui nous ont offensés. Et ne nous laisse pas entrer en tentation, mais délivre-nous du Mal. Amen.",
-    "Notre-Dame de Lourdes": "Notre-Dame de Lourdes, priez pour nous. Sainte Bernadette, priez pour nous. Seigneur, accueille l'intention de tous ceux qui prient ici et donne à chacun la paix du cœur. Amen.",
-  };
+  const LIENS_PRIERES = [
+    ["Livret de prières du pèlerinage", "Malte 2026", "https://media.magnificat.net/magento-media/media/flipbook/Malte_2026/8/index.html"],
+    ["Autres prières", "Ouvrir le deuxième lien", "https://share.google/wr3QrjFXI9tke1L2v"],
+  ];
   $("aideBtn").onclick = () => {
-    const noms = Object.keys(PRIERES), rang = el("div", "tabsrow"), txt = el("p", "priere");
-    const choisir = (n) => { txt.textContent = PRIERES[n]; rang.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.n === n))); };
-    noms.forEach((n) => { const b = el("button"); b.type = "button"; b.dataset.n = n; b.textContent = n; b.onclick = () => choisir(n); rang.append(b); });
-    choisir(noms[0]); ouvrir("Prières pour m'aider", [rang, txt]);
+    const liens = LIENS_PRIERES.map(([t, d, u]) => { const a = el("a", "lienprière", "<b>" + t + "</b><small>" + d + "</small>"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer"; return a; });
+    ouvrir("Prières pour m'aider", [el("p", "", "Ces livrets s'ouvrent dans une nouvelle page."), ...liens]);
   };
   async function partager() {
     const d = { title: "Intentions de prière", text: "Confiez une intention ou priez pour celles des autres.", url: location.href.split("#")[0] };
