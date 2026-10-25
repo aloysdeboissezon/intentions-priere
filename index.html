@@ -254,6 +254,10 @@ nav.tabs button[aria-selected="true"]{background:transparent!important;color:#ff
 .empty img{height:4rem;width:auto}
 .empty h3{font-size:1.4rem}
 .empty p{margin:0;color:var(--muted)}
+.empty{touch-action:pan-y}
+.empty.anim{transition:transform .3s ease,opacity .3s}
+.empty.anim.ressort{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.empty p.revoirhint{font-size:.9rem}
 
 /* Écrire : une page blanche, le micro en bas */
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -329,6 +333,7 @@ nav.tabs .e{font-size:1.4rem}
 .grab{width:2.8rem;height:.3rem;border-radius:99px;background:var(--line);margin:.2rem auto}
 .sheet .logo{height:4.2rem;width:auto;align-self:center}
 .sheet p{margin:0}
+.big.petit{min-height:2.8rem;font-size:1rem;width:auto;align-self:center;padding:.4rem 1.8rem}
 .sheet a{color:var(--red);font-weight:700}
 .tabsrow{display:flex;gap:.5rem;flex-wrap:wrap}
 .tabsrow button{border:1.5px solid var(--line);background:var(--bg);border-radius:.4rem;padding:.55rem 1rem;font-weight:700;min-height:2.8rem}
@@ -355,7 +360,7 @@ nav.tabs .e{font-size:1.4rem}
 #home{position:absolute;inset:0;z-index:40;display:flex;flex-direction:column;background:#fff}
 .half{flex:1;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.35rem;text-align:center;padding:1.4rem;color:#fff;position:relative;transition:filter .15s}
 .half:active{filter:brightness(.9)}
-.half.prier{background:#9d1328}
+.half.prier{background:#9d1328;flex:1.3}
 .half.ecrire{background:#fff;color:var(--red)}
 @keyframes fromTop{from{transform:translateY(-100%)}}
 @keyframes fromBottom{from{transform:translateY(100%)}}
@@ -363,7 +368,7 @@ nav.tabs .e{font-size:1.4rem}
 .half b{font-family:var(--f-title);font-weight:400;font-size:2.5rem;line-height:1.1}
 .half small{font-size:1.05rem;opacity:.92;max-width:15rem;line-height:1.35}
 .half.prier{padding-bottom:3.2rem}.half.ecrire{padding-top:3.2rem}
-.seal{position:absolute;left:50%;top:50%;width:5.6rem;height:5.6rem;margin:-2.8rem 0 0 -2.8rem;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 .3rem #fff,0 6px 24px rgba(0,0,0,.3);pointer-events:none;z-index:2}
+.seal{position:absolute;left:50%;top:56.5%;width:5.6rem;height:5.6rem;margin:-2.8rem 0 0 -2.8rem;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 .3rem #fff,0 6px 24px rgba(0,0,0,.3);pointer-events:none;z-index:2}
 .seal img{height:3.5rem;width:auto}
 @keyframes seal{from{opacity:0;transform:scale(.4)}}
 #home .homesize{position:absolute;top:max(.8rem,env(safe-area-inset-top,0px));right:max(.9rem,env(safe-area-inset-right,0px));z-index:3;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.55);color:#fff}
@@ -379,7 +384,7 @@ nav.tabs .e{font-size:1.4rem}
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21M9 21h6"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M3.5 5.5h6A2.5 2.5 0 0 1 12 8v11.5a2.5 2.5 0 0 0-2.5-2.5h-6zM20.5 5.5h-6A2.5 2.5 0 0 0 12 8v11.5a2.5 2.5 0 0 1 2.5-2.5h6z"/></symbol>
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
-  <symbol id="i-malte" viewBox="0 0 24 24"><path d="M7 2L12 5.2L17 2L14.8 9.2L22 7L18.8 12L22 17L14.8 14.8L17 22L12 18.8L7 22L9.2 14.8L2 17L5.2 12L2 7L9.2 9.2Z" fill="currentColor" stroke="currentColor" stroke-width=".8" stroke-linejoin="round"/></symbol>
+  <symbol id="i-malte" viewBox="0 0 24 24"><path d="M8.10 1.00L12.00 4.90L15.90 1.00L13.90 10.10L23.00 8.10L19.10 12.00L23.00 15.90L13.90 13.90L15.90 23.00L12.00 19.10L8.10 23.00L10.10 13.90L1.00 15.90L4.90 12.00L1.00 8.10L10.10 10.10Z" fill="currentColor" stroke="currentColor" stroke-width=".5" stroke-linejoin="round"/></symbol>
   <symbol id="i-chapelet" viewBox="0 0 24 24"><circle cx="3.20" cy="3.00" r="1.2" fill="currentColor" stroke="none"/><circle cx="5.40" cy="6.76" r="1.2" fill="currentColor" stroke="none"/><circle cx="7.60" cy="9.45" r="1.2" fill="currentColor" stroke="none"/><circle cx="9.80" cy="11.06" r="1.2" fill="currentColor" stroke="none"/><circle cx="14.20" cy="11.06" r="1.2" fill="currentColor" stroke="none"/><circle cx="16.40" cy="9.45" r="1.2" fill="currentColor" stroke="none"/><circle cx="18.60" cy="6.76" r="1.2" fill="currentColor" stroke="none"/><circle cx="20.80" cy="3.00" r="1.2" fill="currentColor" stroke="none"/><circle cx="12" cy="11.6" r="1.5" fill="currentColor" stroke="none"/><circle cx="12" cy="14.7" r="1.05" fill="currentColor" stroke="none"/><path d="M12 16.2v6.6M9.4 18.6h5.2" stroke-width="2"/></symbol>
   <symbol id="i-stop" viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor"/></symbol>
   <symbol id="grotte" viewBox="0 0 100 100"><path d="M12 90 V52 C12 26 30 10 50 10 C70 10 88 26 88 52 V90" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/><path d="M50 30 l4 10 h10 l-8 6 3 10 -9 -6 -9 6 3 -10 -8 -6 h10 z" fill="currentColor"/><path d="M34 90 V72 a16 16 0 0 1 32 0 V90" fill="none" stroke="currentColor" stroke-width="5"/></symbol>
@@ -581,7 +586,7 @@ nav.tabs .e{font-size:1.4rem}
   // ---------- Fenêtres du bas ----------
   let sheetFocus = null;
   function ouvrir(titre, contenu, sansFermer) {
-    $("sheetTitle").textContent = titre; const b = $("sheetBody"); b.innerHTML = ""; b.append(...[].concat(contenu));
+    $("sheetTitle").textContent = titre; $("sheetTitle").hidden = !titre; const b = $("sheetBody"); b.innerHTML = ""; b.append(...[].concat(contenu));
     sheetFocus = document.activeElement; $("sheet").hidden = false; $("sheet").querySelector(".sheet").scrollTop = 0; $("sheetClose").hidden = !!sansFermer; (sansFermer ? $("sheetBody").querySelector("button") : $("sheetClose")).focus();
   }
   function fermer() { $("sheet").hidden = true; if (sheetFocus && sheetFocus.focus) sheetFocus.focus(); }
@@ -665,7 +670,7 @@ nav.tabs .e{font-size:1.4rem}
   });
 
   // ---------- Prier : pile de cartes ----------
-  const file = () => visibles().filter((i) => !i.lourdes && !S.deja.has(i.id) && !S.passees.has(i.id)).sort((a, b) => b.creeLe - a.creeLe);
+  const file = () => visibles().filter((i) => !i.lourdes && (S.revoir || !S.deja.has(i.id)) && !S.passees.has(i.id)).sort((a, b) => b.creeLe - a.creeLe);
   let dragging = false, signature = "";
   function carte(i, niveau) {
     const c = el("article", "card" + (niveau ? " l" + niveau : "")); c.dataset.id = i.id;
@@ -692,7 +697,7 @@ nav.tabs .e{font-size:1.4rem}
     const prog = $("progress"); prog.innerHTML = "";
     if (!S.loaded) { deck.append(el("div", "skel")); return; }
     if (top3.length === 0) {
-      const vide = el("div", "empty"); const total = visibles().length;
+      const vide = el("div", "empty"); const total = visibles().filter((i) => !i.lourdes).length;
       const logo = el("img"); logo.src = LOGO; logo.alt = "";
       const t = S.erreur && !total ? "Impossible de charger les intentions" : total === 0 ? "Aucune intention pour l'instant" : "Merci pour vos prières";
       const p = S.erreur && !total ? "Vérifiez votre connexion internet puis réessayez." : total === 0 ? "Écrivez la première : d'autres prieront avec vous." : "Vous avez prié pour toutes les intentions. Revenez plus tard.";
@@ -700,7 +705,7 @@ nav.tabs .e{font-size:1.4rem}
       const b = el("button", "big primary"); b.type = "button";
       if (S.erreur && !total) { b.textContent = "Réessayer"; b.onclick = () => location.reload(); } else { b.textContent = "Confier une intention"; b.onclick = () => show("ecrire"); }
       vide.append(b);
-      if (S.passees.size) { const r = el("button", "linkbtn"); r.type = "button"; r.textContent = "Revoir les intentions passées"; r.onclick = () => { S.passees.clear(); renderDeck(); }; vide.append(r); }
+      if (total) { vide.append(el("p", "revoirhint", "← Glissez vers la gauche pour revoir les intentions")); bindRevoir(vide); }
       deck.append(vide); return;
     }
     top3.slice().reverse().forEach((i, k, arr) => deck.append(carte(i, arr.length - 1 - k)));
@@ -709,6 +714,14 @@ nav.tabs .e{font-size:1.4rem}
     if (avant && deck.lastElementChild.dataset.id === avant) deck.lastElementChild.classList.add("promote");
     bindDrag(deck.lastElementChild);
   }
+  function revoir() { S.revoir = true; S.passees.clear(); signature = ""; renderDeck(); }
+  function bindRevoir(box) {
+    let x0 = null, dx = 0;
+    box.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; box.setPointerCapture(e.pointerId); box.classList.remove("anim"); });
+    box.addEventListener("pointermove", (e) => { if (x0 === null) return; dx = e.clientX - x0; box.style.transform = "translateX(" + dx + "px) rotate(" + dx / 28 + "deg)"; });
+    const fin = () => { if (x0 === null) return; x0 = null; if (Math.abs(dx) > 80) { box.classList.add("anim"); box.style.transform = "translateX(" + (dx < 0 ? -140 : 140) + "%) rotate(" + (dx < 0 ? -14 : 14) + "deg)"; setTimeout(revoir, 260); } else { box.classList.add("anim", "ressort"); box.style.transform = ""; } };
+    box.addEventListener("pointerup", fin); box.addEventListener("pointercancel", fin);
+  }
   function renderGrotte() { if (!$("bandeau")) return;
     const n = visibles().filter((i) => i.lourdes).length; $("bandeau").hidden = n === 0;
     if (n) $("grotteTxt").innerHTML = "<b>" + n + (n > 1 ? " intentions" : " intention") + "</b> pour la Grotte";
@@ -716,7 +729,7 @@ nav.tabs .e{font-size:1.4rem}
   function bindDrag(card) {
     let x0 = null, dx = 0, id = null, t0 = 0, vx = 0, tPrev = 0, xPrev = 0;
     const oui = card.querySelector(".stamp"); const pill = card.querySelector(".count"), nn = pill && pill.querySelector(".n"), base = nn ? Number(nn.textContent) || 0 : 0;
-    const preview = (p) => { if (!pill) return; pill.style.transform = p > 0 ? "scale(" + (1 + p * .4) + ")" : ""; const h = p > .55; pill.classList.toggle("hot", h); nn.textContent = h ? base + 1 : base; }; const suivante = $("deck").children[$("deck").children.length - 2];
+    const dejaPrie = S.deja.has(card.dataset.id); const preview = (p) => { if (!pill) return; pill.style.transform = p > 0 ? "scale(" + (1 + p * .4) + ")" : ""; const h = p > .55; pill.classList.toggle("hot", h); nn.textContent = h && !dejaPrie ? base + 1 : base; }; const suivante = $("deck").children[$("deck").children.length - 2];
     card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort"); });
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
@@ -740,12 +753,12 @@ nav.tabs .e{font-size:1.4rem}
   async function prier(id, card, dir) {
     card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
     const i = par(id); if (!S.db) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
-    S.deja.add(id); ecrire("prie", [...S.deja]); if (i) i.prieres = (i.prieres || 0) + 1;
+    const nouvelle = !S.deja.has(id); S.passees.add(id); S.deja.add(id); ecrire("prie", [...S.deja]); if (i && nouvelle) i.prieres = (i.prieres || 0) + 1;
     const pill = card.querySelector(".count"); card.classList.add("anim", "ressort"); card.style.transform = ""; card.querySelector(".stamp").style.opacity = 1;
-    if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
+    if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
     setTimeout(() => { envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 320); }, 1000);
-    try { await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
+    try { if (nouvelle) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   async function signaler(id) {
     if (!S.db) return; S.signales.add(id); ecrire("signales", [...S.signales]);
@@ -764,8 +777,8 @@ nav.tabs .e{font-size:1.4rem}
   { const b = lire("brouillon", ""); if (b) { texte.value = b; majChars(); } }
   $("lourdesChk").onchange = () => {
     if (!$("lourdesChk").checked) return;
-    const b = el("button", "big primary"); b.type = "button"; b.textContent = "J'ai compris"; b.onclick = fermer;
-    ouvrir("Dépôt à Lourdes", [el("p", "priere", "Cette intention sera envoyée et déposée à la Grotte de Lourdes par un chapelain de l'Ordre de Malte."), el("p", "", "Elle n'apparaîtra donc pas dans la liste des intentions proposées à la prière sur l'application."), b], true);
+    const b = el("button", "big primary petit"); b.type = "button"; b.textContent = "J'ai compris"; b.onclick = fermer;
+    ouvrir("", [el("p", "", "Cette intention sera confiée à un chapelain de l'Ordre de Malte qui la déposera à la Grotte de Lourdes."), el("p", "", "Elle n'apparaîtra donc pas dans la liste des intentions proposées à la prière sur l'application."), b], true);
   };
   $("anonChk").onchange = () => { const a = $("anonChk").checked; $("prenom").hidden = a; if (!a) $("prenom").focus(); };
 
