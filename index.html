@@ -599,12 +599,12 @@ nav.tabs .e{font-size:1.4rem}
   const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 
   const LIENS_PRIERES = [
-    ["Livret de prières du pèlerinage", "Malte 2026", "https://media.magnificat.net/magento-media/media/flipbook/Malte_2026/8/index.html"],
-    ["Autres prières", "Ouvrir le deuxième lien", "https://share.google/wr3QrjFXI9tke1L2v"],
+    ["Saints et bienheureux de l'Ordre", "Découvrir leurs prières et leur vie", "https://share.google/wr3QrjFXI9tke1L2v"],
+    ["Livret du pèlerinage", "Prières et chants du pèlerinage", "https://media.magnificat.net/magento-media/media/flipbook/Malte_2026/8/index.html"],
   ];
   $("aideBtn").onclick = () => {
     const liens = LIENS_PRIERES.map(([t, d, u]) => { const a = el("a", "lienprière", "<b>" + t + "</b><small>" + d + "</small>"); a.href = u; a.target = "_blank"; a.rel = "noopener noreferrer"; return a; });
-    ouvrir("Prières pour m'aider", [el("p", "", "Ces livrets s'ouvrent dans une nouvelle page."), ...liens]);
+    ouvrir("Prières pour m'aider", [el("p", "", "Ces pages s'ouvrent dans un nouvel onglet."), ...liens]);
   };
   async function partager() {
     const d = { title: "Intentions de prière", text: "Confiez une intention ou priez pour celles des autres.", url: location.href.split("#")[0] };
