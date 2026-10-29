@@ -539,8 +539,34 @@ nav.tabs .e{font-size:1.4rem}
   const lire = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
   const ecrire = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const FB = () => window.FB;
-  const visibles = () => S.items.filter((i) => !i.masque);
-  const par = (id) => (id === saintDuJour().id ? saintDuJour() : S.items.find((i) => i.id === id));
+  // Intentions d'exemple pour les présentations : mettre DEMO à false (puis republier) avant le lancement.
+  const DEMO = true;
+  const DEMO_LISTE = [
+    ["Pour mon père qui commence une chimiothérapie lundi. Qu'il garde courage et que nous sachions être présents.", "Claire", 2, 31],
+    ["Pour tous les malades du pèlerinage de Lourdes et ceux qui les accompagnent avec dévouement.", null, 5, 48],
+    ["Seigneur, donne la paix à notre famille. Que les cœurs se rapprochent et que le pardon l'emporte.", "Étienne", 9, 22],
+    ["Pour mon fils qui cherche du travail depuis des mois. Que la confiance ne le quitte pas.", null, 14, 17],
+    ["Merci Seigneur pour la naissance de notre petite Jeanne. Veillez sur elle et sur ses parents.", "Hélène", 20, 36],
+    ["Pour ceux qui sont seuls ce soir, et pour ceux qui n'ont personne à qui parler.", null, 27, 41],
+    ["Pour notre aumônier, qui porte tant de souffrances. Qu'il soit soutenu et reposé.", "Marc", 33, 12],
+    ["Pour mon épouse, en soins palliatifs. Donnez-lui la paix, et à nous la force de l'accompagner.", "Bernard", 41, 52],
+    ["Pour la paix en Terre sainte et dans tous les pays en guerre.", null, 50, 64],
+    ["Que Marie protège mes enfants et leur donne la joie de croire.", "Anne-Sophie", 58, 19],
+    ["Pour les bénévoles de l'Hospitalité, afin qu'ils gardent la joie du service.", null, 71, 27],
+    ["Pour mon ami Thomas, en dépression. Qu'il retrouve le goût de vivre et des mains tendues.", null, 80, 15],
+    ["Pour une grâce de réconciliation avec mon frère, après dix ans de silence.", "Philippe", 96, 33],
+    ["Seigneur, aide-moi à accepter ma maladie sans perdre l'espérance.", null, 110, 38],
+    ["Pour les défunts de notre paroisse, et pour tous ceux que personne ne prie.", null, 130, 24],
+    ["Pour les jeunes qui préparent leur confirmation. Que l'Esprit Saint les éclaire.", "Marie", 150, 11],
+    ["Pour ma grand-mère qui perd la mémoire. Qu'elle sente toujours qu'elle est aimée.", "Camille", 175, 29],
+    ["Pour les pèlerins qui partent bientôt : un voyage serein et un cœur ouvert.", null, 200, 14],
+    ["Merci pour la guérison de mon mari. Que ce signe de votre bonté en touche d'autres.", "Isabelle", 230, 21],
+    ["Pour les personnes sans domicile, en particulier à l'approche de l'hiver.", null, 270, 35],
+    ["Pour notre pape, nos évêques et tous nos prêtres. Que le Seigneur les garde.", null, 320, 26],
+    ["Pour moi, qui ai du mal à prier en ce moment. Que la lumière revienne.", null, 380, 9],
+  ].map((x, k) => ({ id: "demo-" + k, texte: x[0], auteur: x[1], lourdes: false, creeLe: Date.now() - x[2] * 6e4 * 3, prieres: x[3], signalements: 0, masque: false, demo: true }));
+  const visibles = () => S.items.filter((i) => !i.masque).concat(DEMO ? DEMO_LISTE : []);
+  const par = (id) => (id === saintDuJour().id ? saintDuJour() : visibles().find((i) => i.id === id));
   const compte = (id) => (par(id) || {}).prieres || 0;
   const signale = (id) => (par(id) || {}).signalements || 0;
   const personnes = (n) => n === 0 ? "Soyez la première personne à prier" : n === 1 ? "1 personne a prié" : n + " personnes ont prié";
@@ -819,9 +845,10 @@ nav.tabs .e{font-size:1.4rem}
     const pill = card.querySelector(".count");     if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
     vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
     envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 520);
-    try { if (nouvelle && !(i && i.saint)) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
+    try { if (nouvelle && !(i && (i.saint || i.demo))) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   async function signaler(id) {
+    if (String(id).startsWith("demo-")) { S.passees.add(id); signature = ""; renderDeck(); toast("Merci, l'intention est signalée"); return; }
     if (!S.db) return; S.signales.add(id); ecrire("signales", [...S.signales]);
     try { await FB().incr(id, "signalements"); S.passees.add(id); signature = ""; renderDeck(); toast("Merci, l'intention est signalée"); } catch (e) { toast("Le signalement n'a pas pu être envoyé"); }
   }
