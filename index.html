@@ -460,20 +460,27 @@ html.grand .card.saint h3{font-size:1.1rem}
 #croix .amen{opacity:0}#croix .amen.go{animation:mot 1.2s ease both}
 #croix #croixBtn{opacity:0}#croix #croixBtn.go{animation:mot .9s ease both}
 @media (prefers-reduced-motion:reduce){#croixT .mot,#croix .amen,#croix #croixBtn{animation:none!important;opacity:1!important;filter:none!important}}
-#mains .mainsfig{position:absolute;left:50%;top:50%;width:min(62%,15rem);transform:translate(-50%,-50%);opacity:0}
-#mains .mainsfig svg{width:100%;height:auto;display:block;filter:drop-shadow(0 .6rem 1.4rem rgba(120,60,20,.35))}
-#mains.on .mainsfig{animation:mainsFig 1.8s cubic-bezier(.2,.8,.2,1) both}
-@keyframes mainsFig{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}28%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%{opacity:1;transform:translate(-50%,-53%) scale(1.02)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
-#mains .rayons{position:absolute;left:50%;top:48%;width:150vmax;height:150vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,236,170,.0) 0 7deg,rgba(255,236,170,.32) 7deg 11deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 38%);mask:radial-gradient(circle,#000 0,transparent 38%);animation:rayons 1.8s linear both}
-@keyframes rayons{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(14deg)}}
-.card.vol{position:absolute!important;inset:auto;margin:0;z-index:66;pointer-events:none;transform-origin:50% 100%;animation:vol 2.1s cubic-bezier(.4,0,.75,.45) both;box-shadow:0 30px 60px -10px rgba(255,214,120,.55),0 0 0 3px rgba(255,226,150,.35)}
-@keyframes vol{0%{transform:none;opacity:1}12%{transform:translateY(.6rem) scale(1.02);opacity:1}60%{opacity:1}100%{transform:translateY(var(--dy)) scale(.55);opacity:0}}
-#mains{z-index:60}
-#mains .mainsfig{top:66%;width:min(46%,11rem)}
-@keyframes mainsFig{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}22%{opacity:1;transform:translate(-50%,-50%) scale(1)}78%{opacity:1;transform:translate(-50%,-53%) scale(1.02)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
-#mains.on{animation-duration:2.2s}
-#mains.on .mainsfig{animation-duration:2.2s}
-@media (prefers-reduced-motion:reduce){.card.vol{animation-duration:.6s}}
+/* Élévation de l'intention (v30) : mains jointes en photo, la carte s'élève jusqu'à la lumière */
+#mains{z-index:60;background:linear-gradient(to bottom,rgba(255,250,232,.97),rgba(255,240,205,.96) 45%,rgba(250,228,198,.985));opacity:0}
+#mains.on{animation:mainsFond var(--t,3.2s) ease both}
+@keyframes mainsFond{0%{opacity:0}10%{opacity:1}86%{opacity:1}100%{opacity:0}}
+#mains .ciel{position:absolute;left:-20%;right:-20%;top:-30%;height:75%;background:radial-gradient(ellipse at 50% 30%,#fff 0,rgba(255,246,214,.95) 22%,rgba(255,220,140,.45) 48%,transparent 72%);opacity:0}
+#mains.on .ciel{animation:ciel var(--t,3.2s) ease both}
+@keyframes ciel{0%{opacity:0}25%{opacity:.55}70%{opacity:.8}84%{opacity:1;transform:scale(1.12)}100%{opacity:0;transform:scale(1.12)}}
+#mains .rayons{position:absolute;left:50%;top:0;width:180vmax;height:180vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,226,150,0) 0 6deg,rgba(255,226,150,.38) 6deg 9deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 32%);mask:radial-gradient(circle,#000 0,transparent 32%);opacity:0}
+#mains.on .rayons{animation:rayons var(--t,3.2s) linear both}
+@keyframes rayons{0%{opacity:0;transform:translate(-50%,-50%) rotate(0)}30%{opacity:1}85%{opacity:1}100%{opacity:0;transform:translate(-50%,-50%) rotate(12deg)}}
+#mains .mainsfig{position:absolute;left:50%;bottom:0;top:auto;width:min(46%,12rem);height:auto;transform:translateX(-36%);opacity:0;filter:drop-shadow(0 .5rem 1.2rem rgba(120,60,20,.25))}
+#mains.on .mainsfig{animation:mainsFig var(--t,3.2s) cubic-bezier(.2,.8,.2,1) both}
+@keyframes mainsFig{0%{opacity:0;transform:translate(-36%,35%)}16%{opacity:1;transform:translate(-36%,0)}72%{opacity:1;transform:translate(-36%,-2%)}92%{opacity:0;transform:translate(-36%,4%)}100%{opacity:0}}
+#mains .legende{position:absolute;left:0;right:0;bottom:max(1.2rem,env(safe-area-inset-bottom,0px));text-align:center;font-family:var(--f-title);font-size:1.3rem;color:var(--red-deep);text-shadow:0 0 .8rem #fff8e6,0 0 .3rem #fff8e6;padding:0 1rem;opacity:0;text-wrap:balance}
+#mains.on .legende{animation:legende var(--t,3.2s) ease both}
+@keyframes legende{0%,22%{opacity:0;transform:translateY(.5rem)}34%{opacity:1;transform:none}82%{opacity:1}96%,100%{opacity:0}}
+.volw{position:absolute;z-index:66;pointer-events:none;transform-origin:50% 50%;will-change:transform}
+.volw .card,.volw .card *,.volw .card::after,.volw .card::before{animation:none!important}
+.volw .card{position:absolute;inset:0;margin:0;filter:none!important;transform:none!important;opacity:1!important;visibility:visible!important;box-shadow:0 0 0 2px rgba(255,214,120,.7),0 0 2.4rem rgba(255,206,110,.75),0 1.2rem 2.4rem -1rem rgba(120,60,20,.35)}
+.volw .trainee{position:absolute;left:12%;right:12%;top:92%;height:160%;border-radius:50% 50% 40% 40%/20% 20% 80% 80%;background:linear-gradient(to bottom,rgba(255,214,120,.85),rgba(255,226,160,.45) 35%,rgba(255,236,190,0));filter:blur(10px);opacity:0;transform-origin:50% 0;transform:scaleY(.2)}
+
 </style>
 </head>
 <body>
@@ -872,7 +879,6 @@ html.grand .card.saint h3{font-size:1.1rem}
     ["Gloire au Père, et au Fils, et au Saint-Esprit, comme il était au commencement, maintenant et toujours, et dans les siècles des siècles. Amen.", "Missel romain, Gloire au Père"],
   ];
   let derniereCloture = -1;
-  const MAINS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300"> <defs> <linearGradient id="pa" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d8a07c"/><stop offset="1" stop-color="#eec3a2"/></linearGradient> <linearGradient id="pb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9b996"/><stop offset=".6" stop-color="#f8dcc4"/><stop offset="1" stop-color="#e2ae8b"/></linearGradient> <linearGradient id="ma" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d3cd"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#d2cbc4"/></linearGradient> </defs> <g stroke="#a9704e" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"> <!-- main arrière : doigts décalés --> <path d="M92 262 C86 214 86 176 90 140 L92 70 C92 56 104 56 104 70 L104 40 C104 26 116 26 116 40 L116 62 C116 48 128 48 128 62 L128 100 L128 262 Z" fill="url(#pa)"/> <!-- main avant --> <path d="M104 266 C98 220 98 186 102 150 L104 92 C104 78 116 78 116 92 L117 52 C117 36 130 36 130 52 L130 70 C130 56 142 56 142 70 L142 112 C142 150 146 214 142 266 Z" fill="url(#pb)"/> <!-- phalanges --> <path d="M117 90 C121 92 126 92 130 90 M130 106 C134 108 138 108 142 106" fill="none" opacity=".55"/> <path d="M104 118 C108 120 112 120 116 118" fill="none" opacity=".55"/> <!-- pouce --> <path d="M102 186 C96 168 100 148 110 140 C116 148 114 168 112 192 C108 198 104 194 102 186 Z" fill="#f3cdb0" opacity=".96"/> </g> <path d="M120 46 C121 90 123 140 126 200" stroke="#fff" stroke-opacity=".4" stroke-width="3" fill="none" stroke-linecap="round"/> <path d="M72 300 L80 254 C98 262 138 262 154 254 L162 300 Z" fill="url(#ma)" stroke="#c9c2bb" stroke-width="1.2"/> <path d="M82 266 C104 273 134 273 154 266" stroke="#c9c2bb" stroke-width="1.2" fill="none"/> </svg>`;
 
   const jourCle = () => { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
   const jourPrie = () => { const j = lire("prieJour", {}); return new Set(j.d === jourCle() ? j.ids : []); };
@@ -929,19 +935,44 @@ html.grand .card.saint h3{font-size:1.1rem}
     P.occupe = true; if (c) { c.classList.remove("anim", "ressort"); c.classList.add("glisse"); c.style.transform = "translateX(" + dir * 120 + "%)"; c.style.opacity = "0"; }
     setTimeout(() => { P.idx = j; P.occupe = false; renderCarte(dir); }, 330);
   }
+  // Élévation : les mains jointes présentent l'intention, puis la carte monte jusqu'à la lumière du haut de l'écran.
+  new Image().src = "mains-jointes.webp";
+  const T_ELEV = matchMedia("(prefers-reduced-motion: reduce)").matches ? 1400 : 3200;
   function mains() {
-    const m = $("mains"); m.innerHTML = "";  m.hidden = false;
-    const w = el("div", "mainsfig"); w.innerHTML = MAINS_SVG; m.append(el("div", "rayons"), w);
+    const m = $("mains"); m.innerHTML = ""; m.hidden = false; m.style.setProperty("--t", T_ELEV + "ms");
+    const img = document.createElement("img"); img.className = "mainsfig"; img.src = "mains-jointes.webp"; img.alt = ""; img.decoding = "async";
+    const leg = el("div", "legende"); leg.textContent = "Votre prière monte vers le Seigneur";
+    m.append(el("div", "ciel"), el("div", "rayons"), img, leg);
     m.classList.remove("on"); void m.offsetWidth; m.classList.add("on");
-    clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; }, 2300);
+    clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; m.classList.remove("on"); }, T_ELEV + 120);
   }
   function monter(c) {
-    // la carte (copie) s'élève lentement sur tout l'écran jusqu'au ciel, puis s'efface
-    const app = $("app").getBoundingClientRect(), r = c.getBoundingClientRect();
-    const v = c.cloneNode(true); v.className = c.className.replace(/\b(anim|ressort|entreD|entreG|l1)\b/g, "") + " vol";
-    v.style.cssText = "left:" + (r.left - app.left) + "px;top:" + (r.top - app.top) + "px;width:" + r.width + "px;height:" + r.height + "px;--dy:-" + Math.round(r.top - app.top + r.height + 60) + "px";
-    $("app").append(v); c.style.visibility = "hidden";
-    setTimeout(() => v.remove(), 2300);
+    // la carte (copie) se pose au-dessus des mains, puis s'élève sans s'effacer jusqu'à sortir par le haut de l'écran
+    const A = $("app").getBoundingClientRect(), r = c.getBoundingClientRect();
+    const w = el("div", "volw"); w.style.cssText = "left:" + (r.left - A.left) + "px;top:" + (r.top - A.top) + "px;width:" + r.width + "px;height:" + r.height + "px";
+    const v = c.cloneNode(true); v.className = c.className.replace(/\b(anim|ressort|glisse|entreD|entreG|l1)\b/g, "");
+    const tr = el("div", "trainee"); w.append(tr, v); $("app").append(w); c.style.visibility = "hidden";
+    const cx0 = r.left - A.left + r.width / 2, cy0 = r.top - A.top + r.height / 2;
+    const s1 = Math.min(.5, (A.height * .26) / r.height), s2 = s1 * .8;
+    const doigts = A.height - Math.min(A.width * .46, 192) * (868 / 440);   // haut des mains (photo 440 x 868)
+    const dx = A.width / 2 - cx0, dy1 = Math.max(doigts, A.height * .5) - 4 - (r.height * s1) / 2 - cy0;
+    const dy2 = -(r.height * s2) / 2 - 40 - cy0;
+    const K = (x, y, sc) => "translate(" + x + "px," + y + "px) scale(" + sc + ")";
+    w.animate([
+      { transform: K(0, 0, 1), offset: 0, easing: "cubic-bezier(.3,.7,.3,1)" },
+      { transform: K(dx, dy1, s1), offset: .2 },
+      { transform: K(dx, dy1 - 6, s1), offset: .34, easing: "cubic-bezier(.55,0,.75,.35)" },
+      { transform: K(dx, dy2, s2), offset: .86 },
+      { transform: K(dx, dy2, s2), offset: 1 }
+    ], { duration: T_ELEV, fill: "forwards" });
+    tr.animate([
+      { opacity: 0, transform: "scaleY(.2)", offset: 0 },
+      { opacity: 0, transform: "scaleY(.2)", offset: .3 },
+      { opacity: 1, transform: "scaleY(1)", offset: .5 },
+      { opacity: 1, transform: "scaleY(1.3)", offset: .86 },
+      { opacity: 0, transform: "scaleY(1.3)", offset: 1 }
+    ], { duration: T_ELEV, fill: "forwards" });
+    setTimeout(() => w.remove(), T_ELEV + 120);
   }
   async function aPrie() {
     if (P.occupe || P.phase !== "deck") return; const i = P.liste[P.idx]; if (!i || P.faits.has(i.id)) return;
@@ -958,7 +989,7 @@ html.grand .card.saint h3{font-size:1.1rem}
       if (j < 0) { cloture("fin"); return; }
       P.idx = j; renderCarte(1);
     };
-    setTimeout(suite, 1900);
+    setTimeout(suite, T_ELEV - 250);
     try { if (nouvelle && !i.saint && !i.demo) await FB().incr(i.id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   function cloture(motif) {
