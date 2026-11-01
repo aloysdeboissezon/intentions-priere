@@ -424,10 +424,6 @@ html.grand header.top .logo{height:2.4rem}
 #mains{position:absolute;inset:0;z-index:70;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(255,244,214,.75),rgba(157,19,40,.18) 70%,transparent)}
 #mains.on{animation:mainsFond 1.8s ease both}
 @keyframes mainsFond{0%{opacity:0}22%{opacity:1}75%{opacity:1}100%{opacity:0}}
-#mains .grand{position:absolute;left:50%;top:44%;font-size:8rem;transform:translate(-50%,-50%) scale(.4);opacity:0;animation:mainsGrand 1.7s cubic-bezier(.2,.8,.2,1) both}
-@keyframes mainsGrand{0%{opacity:0;transform:translate(-50%,-30%) scale(.4)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}70%{opacity:1;transform:translate(-50%,-52%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1.1)}}
-#mains .petit{position:absolute;bottom:-3rem;opacity:0;animation:mainsPetit 1.6s ease-out both}
-@keyframes mainsPetit{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-95vh)}}
 /* Pages plein écran */
 .plein{position:absolute;inset:0;z-index:55;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(1.4rem,env(safe-area-inset-top,0px)) 1.6rem max(1.4rem,env(safe-area-inset-bottom,0px));animation:pleinIn .45s ease both;overflow-y:auto}
 .plein.sort{animation:pleinOut .35s ease both}
@@ -449,7 +445,7 @@ html.grand header.top .logo{height:2.4rem}
 #fin .note{margin:0;color:var(--muted)}
 #fin .big{margin-top:.8rem}
 @media (max-height:700px){.plein h2{font-size:1.55rem}#croix h2{font-size:1.7rem}.plein .opts button{min-height:3.4rem}#fin blockquote{font-size:1.05rem}}
-@media (prefers-reduced-motion:reduce){#mains .petit{display:none}.card.ciel{transition-duration:.4s}}
+@media (prefers-reduced-motion:reduce){.card.ciel{transition-duration:.4s}}
 html.grand .nav3{display:none}
 html.grand #prieBtn{font-size:1rem;padding:.5rem .7rem;min-height:3.2rem;white-space:normal;line-height:1.2}
 html.grand .rowaide .aide{font-size:.85rem;min-height:2.6rem}
@@ -458,6 +454,18 @@ html.grand .card.saint h3{font-size:1.1rem}
 #prieBtn{font-size:1.05rem;align-self:stretch}.rowaide{align-self:stretch}
 @media (max-width:359px){#prieBtn{white-space:normal;line-height:1.2;font-size:.95rem;min-height:3rem}}
 @media (max-height:640px){.rowaide .aide{min-height:2.2rem;font-size:.8rem;white-space:nowrap;padding:.1rem .5rem}.rowaide .aide .chap{width:1.3rem;height:1.3rem}.nav3{display:none}#prieBtn{min-height:3rem}.card.saint .text{font-size:.9rem}.saint .emb{width:1.6rem;height:1.6rem}.card.saint h3{font-size:1.1rem}.card.saint .quand{font-size:.85rem}}
+#croixT .ligne{display:block}
+#croixT .mot{display:inline-block;opacity:0;animation:mot 1s cubic-bezier(.22,.61,.36,1) both;white-space:pre}
+@keyframes mot{from{opacity:0;transform:translateY(.5rem);filter:blur(5px)}to{opacity:1;transform:none;filter:blur(0)}}
+#croix .amen{opacity:0}#croix .amen.go{animation:mot 1.2s ease both}
+#croix #croixBtn{opacity:0}#croix #croixBtn.go{animation:mot .9s ease both}
+@media (prefers-reduced-motion:reduce){#croixT .mot,#croix .amen,#croix #croixBtn{animation:none!important;opacity:1!important;filter:none!important}}
+#mains .mainsfig{position:absolute;left:50%;top:50%;width:min(62%,15rem);transform:translate(-50%,-50%);opacity:0}
+#mains .mainsfig svg{width:100%;height:auto;display:block;filter:drop-shadow(0 .6rem 1.4rem rgba(120,60,20,.35))}
+#mains.on .mainsfig{animation:mainsFig 1.8s cubic-bezier(.2,.8,.2,1) both}
+@keyframes mainsFig{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}28%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%{opacity:1;transform:translate(-50%,-53%) scale(1.02)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
+#mains .rayons{position:absolute;left:50%;top:48%;width:150vmax;height:150vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,236,170,.0) 0 7deg,rgba(255,236,170,.32) 7deg 11deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 38%);mask:radial-gradient(circle,#000 0,transparent 38%);animation:rayons 1.8s linear both}
+@keyframes rayons{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(14deg)}}
 </style>
 </head>
 <body>
@@ -602,8 +610,8 @@ html.grand .card.saint h3{font-size:1.1rem}
     <button class="retour" id="croixRetour" type="button">‹ Retour</button>
     <div class="pc">
       <p class="pre">Prenons un instant de silence</p>
-      <h2 id="croixT">Au nom du Père,<br>et du Fils,<br>et du Saint-Esprit.</h2>
-      <p class="amen">Amen.</p>
+      <h2 id="croixT" aria-label="Au nom du Père, et du Fils, et du Saint-Esprit."></h2>
+      <p class="amen" id="croixAmen">Amen.</p>
       <button class="big primary" id="croixBtn" type="button">Commencer la prière</button>
     </div>
   </section>
@@ -846,23 +854,26 @@ html.grand .card.saint h3{font-size:1.1rem}
   // ---------- Prier : parcours (choix → signe de croix → cartes → clôture) ----------
   const P = { phase: null, n: 0, liste: [], idx: 0, faits: new Set(), occupe: false };
   const CLOTURES = [
-    ["Que le Seigneur nous bénisse, qu'il nous garde de tout mal et nous conduise à la vie éternelle. Amen.", "Bénédiction traditionnelle"],
-    ["Je vous salue, Marie, pleine de grâce ; le Seigneur est avec vous. Vous êtes bénie entre toutes les femmes, et Jésus, le fruit de vos entrailles, est béni. Sainte Marie, Mère de Dieu, priez pour nous, pauvres pécheurs, maintenant et à l'heure de notre mort. Amen.", "Je vous salue, Marie"],
-    ["Seigneur, faites de moi un instrument de votre paix : là où est la haine, que je mette l'amour ; là où est l'offense, que je mette le pardon ; là où est le doute, que je mette la foi ; là où est le désespoir, que je mette l'espérance ; là où sont les ténèbres, que je mette votre lumière ; là où est la tristesse, que je mette la joie. Amen.", "Prière pour la paix, attribuée à saint François"],
-    ["Souvenez-vous, ô très miséricordieuse Vierge Marie, qu'on n'a jamais entendu dire qu'aucun de ceux qui ont eu recours à votre protection, imploré votre assistance, réclamé votre secours, ait été abandonné. Amen.", "Souvenez-vous (Memorare)"],
-    ["Gloire au Père, et au Fils, et au Saint-Esprit, comme il était au commencement, maintenant et toujours, et dans les siècles des siècles. Amen.", "Gloire au Père"],
-    ["Sous l'abri de ta miséricorde, nous nous réfugions, sainte Mère de Dieu : ne repousse pas nos prières quand nous sommes dans l'épreuve, mais de tous les dangers délivre-nous toujours, Vierge glorieuse et bénie.", "Sous l'abri de ta miséricorde"],
-    ["Allez dans la paix du Christ. Nous rendons grâce à Dieu.", "Envoi de la messe"],
-    ["Seigneur Jésus, apprends-nous à être généreux, à te servir comme tu le mérites, à donner sans compter, à combattre sans souci des blessures, à travailler sans chercher le repos, à nous dépenser sans attendre d'autre récompense que celle de savoir que nous faisons ta volonté. Amen.", "Prière de saint Ignace de Loyola"],
-    ["Notre Père, qui es aux cieux, que ton nom soit sanctifié, que ton règne vienne, que ta volonté soit faite sur la terre comme au ciel. Donne-nous aujourd'hui notre pain de ce jour. Pardonne-nous nos offenses, comme nous pardonnons aussi à ceux qui nous ont offensés. Et ne nous laisse pas entrer en tentation, mais délivre-nous du Mal. Amen.", "Notre Père"],
+    ["Le Seigneur soit avec vous. — Et avec votre esprit. Que Dieu tout-puissant vous bénisse, le Père, le Fils et le Saint-Esprit. — Amen. Allez dans la paix du Christ. — Nous rendons grâce à Dieu.", "Missel romain, rite de conclusion"],
+    ["Seigneur Jésus Christ, tu as dit à tes Apôtres : « Je vous laisse la paix, je vous donne ma paix » ; ne regarde pas nos péchés, mais la foi de ton Église ; pour que ta volonté s'accomplisse, donne-lui toujours cette paix et conduis-la vers l'unité parfaite, toi qui règnes pour les siècles des siècles. Amen.", "Missel romain, prière pour la paix"],
+    ["Délivre-nous de tout mal, Seigneur, et donne la paix à notre temps ; par ta miséricorde, libère-nous du péché, rassure-nous devant les épreuves en cette vie où nous attendons que se réalise cette bienheureuse espérance : l'avènement de Jésus Christ, notre Sauveur. — Car c'est à toi qu'appartiennent le règne, la puissance et la gloire, pour les siècles des siècles.", "Missel romain, après le Notre Père"],
+    ["Agneau de Dieu, qui enlèves le péché du monde, prends pitié de nous. Agneau de Dieu, qui enlèves le péché du monde, prends pitié de nous. Agneau de Dieu, qui enlèves le péché du monde, donne-nous la paix.", "Missel romain, Agneau de Dieu"],
+    ["Seigneur, je ne suis pas digne de te recevoir, mais dis seulement une parole et je serai guéri.", "Missel romain, avant la communion"],
+    ["Par lui, avec lui et en lui, à toi, Dieu le Père tout-puissant, dans l'unité du Saint-Esprit, tout honneur et toute gloire, pour les siècles des siècles. Amen.", "Missel romain, doxologie de la prière eucharistique"],
+    ["Notre Père, qui es aux cieux, que ton nom soit sanctifié, que ton règne vienne, que ta volonté soit faite sur la terre comme au ciel. Donne-nous aujourd'hui notre pain de ce jour. Pardonne-nous nos offenses, comme nous pardonnons aussi à ceux qui nous ont offensés. Et ne nous laisse pas entrer en tentation, mais délivre-nous du Mal.", "Missel romain, Notre Père"],
+    ["Gloire au Père, et au Fils, et au Saint-Esprit, comme il était au commencement, maintenant et toujours, et dans les siècles des siècles. Amen.", "Missel romain, Gloire au Père"],
   ];
   let derniereCloture = -1;
-  const MAINS_N = 7;
+  const MAINS_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 300"> <defs> <linearGradient id="pa" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d8a07c"/><stop offset="1" stop-color="#eec3a2"/></linearGradient> <linearGradient id="pb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#e9b996"/><stop offset=".6" stop-color="#f8dcc4"/><stop offset="1" stop-color="#e2ae8b"/></linearGradient> <linearGradient id="ma" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d3cd"/><stop offset=".5" stop-color="#fff"/><stop offset="1" stop-color="#d2cbc4"/></linearGradient> </defs> <g stroke="#a9704e" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round"> <!-- main arrière : doigts décalés --> <path d="M92 262 C86 214 86 176 90 140 L92 70 C92 56 104 56 104 70 L104 40 C104 26 116 26 116 40 L116 62 C116 48 128 48 128 62 L128 100 L128 262 Z" fill="url(#pa)"/> <!-- main avant --> <path d="M104 266 C98 220 98 186 102 150 L104 92 C104 78 116 78 116 92 L117 52 C117 36 130 36 130 52 L130 70 C130 56 142 56 142 70 L142 112 C142 150 146 214 142 266 Z" fill="url(#pb)"/> <!-- phalanges --> <path d="M117 90 C121 92 126 92 130 90 M130 106 C134 108 138 108 142 106" fill="none" opacity=".55"/> <path d="M104 118 C108 120 112 120 116 118" fill="none" opacity=".55"/> <!-- pouce --> <path d="M102 186 C96 168 100 148 110 140 C116 148 114 168 112 192 C108 198 104 194 102 186 Z" fill="#f3cdb0" opacity=".96"/> </g> <path d="M120 46 C121 90 123 140 126 200" stroke="#fff" stroke-opacity=".4" stroke-width="3" fill="none" stroke-linecap="round"/> <path d="M72 300 L80 254 C98 262 138 262 154 254 L162 300 Z" fill="url(#ma)" stroke="#c9c2bb" stroke-width="1.2"/> <path d="M82 266 C104 273 134 273 154 266" stroke="#c9c2bb" stroke-width="1.2" fill="none"/> </svg>`;
 
+  const jourCle = () => { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
+  const jourPrie = () => { const j = lire("prieJour", {}); return new Set(j.d === jourCle() ? j.ids : []); };
+  function noterJour(id) { const s = jourPrie(); s.add(id); ecrire("prieJour", { d: jourCle(), ids: [...s] }); }
   function liste() {
-    const q = visibles().filter((i) => !i.lourdes && !S.deja.has(i.id)).sort((a, b) => b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)));
-    const sd = saintDuJour(); if (!S.deja.has(sd.id)) q.unshift(sd);
-    return q;
+    const q = visibles().filter((i) => !i.lourdes).sort((a, b) => b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)));
+    q.unshift(saintDuJour());
+    const auj = jourPrie(); // les intentions déjà priées aujourd'hui passent en fin de liste : on peut toujours recommencer un parcours
+    return q.filter((i) => !auj.has(i.id)).concat(q.filter((i) => auj.has(i.id)));
   }
   const plein = (id, on) => { const e = $(id); if (on) { e.hidden = false; e.classList.remove("sort"); void e.offsetWidth; } else if (!e.hidden) { e.classList.add("sort"); setTimeout(() => { if (e.classList.contains("sort")) { e.hidden = true; e.classList.remove("sort"); } }, 380); } };
 
@@ -870,7 +881,15 @@ html.grand .card.saint h3{font-size:1.1rem}
   function ouvrirChoix() {
     P.phase = "choix"; plein("fin", false); plein("croix", false); plein("choix", true); $("choixOpts").firstElementChild.focus({ preventScroll: true });
   }
-  function ouvrirCroix(n) { P.n = n; P.phase = "croix"; plein("croix", true); $("croixBtn").focus({ preventScroll: true }); }
+  const CROIX_TXT = ["Au nom", "du Père,", "et du Fils,", "et du Saint-Esprit."];
+  function ouvrirCroix(n) {
+    P.n = n; P.phase = "croix";
+    const h = $("croixT"); h.innerHTML = ""; let d = 0.5;
+    CROIX_TXT.forEach((ligne) => { const l = el("span", "ligne"); ligne.split(" ").forEach((mot) => { const w = el("span", "mot", mot + " "); w.style.animationDelay = d.toFixed(2) + "s"; d += 0.36; l.append(w); }); h.append(l); });
+    const am = $("croixAmen"); am.style.animationDelay = (d + 0.35).toFixed(2) + "s"; am.classList.remove("go"); void am.offsetWidth; am.classList.add("go");
+    const bt = $("croixBtn"); bt.style.animationDelay = (d + 1.2).toFixed(2) + "s"; bt.classList.remove("go"); void bt.offsetWidth; bt.classList.add("go");
+    plein("croix", true); bt.focus({ preventScroll: true });
+  }
   function commencer() {
     plein("croix", false); plein("choix", false);
     P.faits = new Set(); P.idx = 0; P.liste = [];
@@ -903,9 +922,8 @@ html.grand .card.saint h3{font-size:1.1rem}
     setTimeout(() => { P.idx = j; P.occupe = false; renderCarte(dir); }, 330);
   }
   function mains() {
-    const m = $("mains"); m.innerHTML = ""; m.hidden = false;
-    m.append(el("span", "grand", "🙏"));
-    for (let k = 0; k < MAINS_N; k++) { const s = el("span", "petit", "🙏"); s.style.left = (8 + Math.random() * 84) + "%"; s.style.animationDelay = (k * 90) + "ms"; s.style.fontSize = (1.6 + Math.random() * 1.6) + "rem"; m.append(s); }
+    const m = $("mains"); m.innerHTML = "";  m.hidden = false;
+    const w = el("div", "mainsfig"); w.innerHTML = MAINS_SVG; m.append(el("div", "rayons"), w);
     m.classList.remove("on"); void m.offsetWidth; m.classList.add("on");
     clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; }, 1900);
   }
@@ -913,7 +931,7 @@ html.grand .card.saint h3{font-size:1.1rem}
     if (P.occupe || P.phase !== "deck") return; const i = P.liste[P.idx]; if (!i || P.faits.has(i.id)) return;
     if (!S.db && !i.saint && !i.demo) { toast("Connexion impossible pour le moment"); return; }
     P.occupe = true; P.faits.add(i.id);
-    const nouvelle = !S.deja.has(i.id); S.deja.add(i.id); ecrire("prie", [...S.deja]);
+    const nouvelle = !S.deja.has(i.id); S.deja.add(i.id); ecrire("prie", [...S.deja]); noterJour(i.id);
     vibre(30); mains();
     const c = $("deck").lastElementChild; if (c) { c.classList.remove("anim", "ressort", "entreD", "entreG"); c.classList.add("ciel"); }
     $("prieBtn").disabled = true;
