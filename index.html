@@ -466,6 +466,14 @@ html.grand .card.saint h3{font-size:1.1rem}
 @keyframes mainsFig{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}28%{opacity:1;transform:translate(-50%,-50%) scale(1)}72%{opacity:1;transform:translate(-50%,-53%) scale(1.02)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
 #mains .rayons{position:absolute;left:50%;top:48%;width:150vmax;height:150vmax;transform:translate(-50%,-50%);background:repeating-conic-gradient(from 0deg,rgba(255,236,170,.0) 0 7deg,rgba(255,236,170,.32) 7deg 11deg);-webkit-mask:radial-gradient(circle,#000 0,transparent 38%);mask:radial-gradient(circle,#000 0,transparent 38%);animation:rayons 1.8s linear both}
 @keyframes rayons{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(14deg)}}
+.card.vol{position:absolute!important;inset:auto;margin:0;z-index:66;pointer-events:none;transform-origin:50% 100%;animation:vol 2.1s cubic-bezier(.4,0,.75,.45) both;box-shadow:0 30px 60px -10px rgba(255,214,120,.55),0 0 0 3px rgba(255,226,150,.35)}
+@keyframes vol{0%{transform:none;opacity:1}12%{transform:translateY(.6rem) scale(1.02);opacity:1}60%{opacity:1}100%{transform:translateY(var(--dy)) scale(.55);opacity:0}}
+#mains{z-index:60}
+#mains .mainsfig{top:66%;width:min(46%,11rem)}
+@keyframes mainsFig{0%{opacity:0;transform:translate(-50%,-30%) scale(.8)}22%{opacity:1;transform:translate(-50%,-50%) scale(1)}78%{opacity:1;transform:translate(-50%,-53%) scale(1.02)}100%{opacity:0;transform:translate(-50%,-62%) scale(1.04)}}
+#mains.on{animation-duration:2.2s}
+#mains.on .mainsfig{animation-duration:2.2s}
+@media (prefers-reduced-motion:reduce){.card.vol{animation-duration:.6s}}
 </style>
 </head>
 <body>
@@ -925,7 +933,15 @@ html.grand .card.saint h3{font-size:1.1rem}
     const m = $("mains"); m.innerHTML = "";  m.hidden = false;
     const w = el("div", "mainsfig"); w.innerHTML = MAINS_SVG; m.append(el("div", "rayons"), w);
     m.classList.remove("on"); void m.offsetWidth; m.classList.add("on");
-    clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; }, 1900);
+    clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; }, 2300);
+  }
+  function monter(c) {
+    // la carte (copie) s'élève lentement sur tout l'écran jusqu'au ciel, puis s'efface
+    const app = $("app").getBoundingClientRect(), r = c.getBoundingClientRect();
+    const v = c.cloneNode(true); v.className = c.className.replace(/\b(anim|ressort|entreD|entreG|l1)\b/g, "") + " vol";
+    v.style.cssText = "left:" + (r.left - app.left) + "px;top:" + (r.top - app.top) + "px;width:" + r.width + "px;height:" + r.height + "px;--dy:-" + Math.round(r.top - app.top + r.height + 60) + "px";
+    $("app").append(v); c.style.visibility = "hidden";
+    setTimeout(() => v.remove(), 2300);
   }
   async function aPrie() {
     if (P.occupe || P.phase !== "deck") return; const i = P.liste[P.idx]; if (!i || P.faits.has(i.id)) return;
@@ -933,7 +949,7 @@ html.grand .card.saint h3{font-size:1.1rem}
     P.occupe = true; P.faits.add(i.id);
     const nouvelle = !S.deja.has(i.id); S.deja.add(i.id); ecrire("prie", [...S.deja]); noterJour(i.id);
     vibre(30); mains();
-    const c = $("deck").lastElementChild; if (c) { c.classList.remove("anim", "ressort", "entreD", "entreG"); c.classList.add("ciel"); }
+    const c = $("deck").lastElementChild; if (c) monter(c);
     $("prieBtn").disabled = true;
     const suite = () => {
       P.occupe = false;
@@ -942,7 +958,7 @@ html.grand .card.saint h3{font-size:1.1rem}
       if (j < 0) { cloture("fin"); return; }
       P.idx = j; renderCarte(1);
     };
-    setTimeout(suite, 1250);
+    setTimeout(suite, 1900);
     try { if (nouvelle && !i.saint && !i.demo) await FB().incr(i.id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
   }
   function cloture(motif) {
