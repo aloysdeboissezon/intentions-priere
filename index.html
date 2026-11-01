@@ -158,7 +158,7 @@ h3{font-size:1.3rem}
 .grotte b{color:var(--blue)}
 
 /* Pile de cartes */
-.actions{flex-direction:column;align-items:stretch;gap:.5rem}
+.actions{flex-direction:column;align-items:stretch;gap:.4rem}
 .swipehint{margin:0;text-align:center;color:var(--muted);font-size:.85rem}
 .aide{align-self:center;display:inline-flex;align-items:center;gap:.5rem;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:.6rem;min-height:3.2rem;padding:.4rem 1.2rem;font-weight:700;font-size:1rem}
 .aide .chap{width:2.1rem;height:2.1rem;color:var(--red)}
@@ -211,13 +211,13 @@ main:has(#v-prier:not([hidden])){display:flex;flex-direction:column}
 .card.saint::after{content:"";position:absolute;top:-20%;bottom:-20%;left:-60%;width:40%;background:linear-gradient(100deg,transparent,rgba(255,236,170,.55),transparent);transform:skewX(-18deg);animation:saintSheen 4.2s ease-in-out 1s infinite;pointer-events:none}
 @keyframes saintIn{0%{opacity:0;transform:translateY(1.2rem) scale(.9);filter:blur(6px)}60%{opacity:1;filter:blur(0)}100%{opacity:1;transform:none}}
 @keyframes saintSheen{0%,55%{left:-60%}100%{left:130%}}
-.card.saint .head{display:none!important}.card.saint{gap:.6rem;padding-top:1.2rem}
+.card.saint .head{display:none!important}.card.saint{gap:.4rem;padding:.9rem 1rem .7rem}
 .saint .chip{background:#fbf0d4;color:#7a5b10;border:1px solid #e6cd8c}
-.saint .emb{width:2.6rem;height:2.6rem;color:var(--red);flex:none;animation:emb 5s ease-in-out infinite}
+.saint .emb{width:2.1rem;height:2.1rem;color:var(--red);flex:none;animation:emb 5s ease-in-out infinite}
 @keyframes emb{50%{transform:scale(1.08)}}
-.saint h3{margin:0;font-family:Marcellus,serif;font-size:1.4rem;line-height:1.2;color:var(--red-deep)}
+.saint h3{margin:0;font-family:Marcellus,serif;font-size:1.25rem;line-height:1.2;color:var(--red-deep)}
 .saint .quand{margin:0;font-size:.95rem;color:#7a5b10;letter-spacing:.04em}
-.card.saint .text{font:400 1.08rem/1.45 "Atkinson Hyperlegible",system-ui,sans-serif;text-align:center;flex:1;display:block;overflow:auto;margin:0}
+.card.saint .text{font:400 1rem/1.42 "Atkinson Hyperlegible",system-ui,sans-serif;text-align:center;flex:1;display:block;overflow:auto;margin:0}
 @media (max-height:700px){.saint .emb{width:2.2rem;height:2.2rem}.saint h3{font-size:1.25rem}.card.saint .text{font-size:.98rem}}
 .saint .foot{justify-content:center;color:#7a5b10}
 @media (prefers-reduced-motion:reduce){.card.saint,.card.saint::after,.saint .emb{animation:none}}
@@ -392,6 +392,72 @@ nav.tabs .e{font-size:1.4rem}
 @media (min-width:640px) and (min-height:640px){#home .homesize{top:3.2rem}}
 .logobtn{background:none;border:0;padding:0;display:flex;flex-shrink:0;border-radius:.6rem}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+
+/* Menu : trois barres */
+.bars{width:1.6rem;height:1.6rem;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+/* Accueil : équilibre et grand texte */
+.homebrand{padding:0 4.4rem}
+.homebrand b{font-size:1.55rem}
+html.grand .homebrand{top:max(4.6rem,calc(env(safe-area-inset-top,0px) + 3.8rem))}
+html.grand .homebrand b{font-size:1.35rem}
+html.grand .homebrand small{letter-spacing:.12em;font-size:.7rem}
+.half.prier{padding-top:5.6rem;padding-bottom:4.6rem;justify-content:center}
+html.grand .half.prier{padding-top:7.2rem}
+html.grand .half.prier b,html.grand .half.ecrire b{font-size:2.1rem}
+html.grand .half small{font-size:.95rem}
+html.grand .brand b{font-size:.95rem}
+html.grand .brand span{font-size:.78rem}
+html.grand header.top .logo{height:2.4rem}
+/* Cartes : navigation */
+.nav3{display:flex;align-items:center;justify-content:space-between;gap:.6rem}
+.nav3 .swipehint{flex:1}
+.navbtn{width:2.1rem;height:2.1rem;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--red);font-size:1.7rem;line-height:1;font-weight:700;padding:0 0 .15rem}
+.navbtn:disabled{opacity:.3}
+#prieBtn:disabled{background:var(--soft);color:var(--muted)}
+.card.entreD,.card.entreG{animation:entre .45s cubic-bezier(.22,.61,.36,1) both}
+@keyframes entre{from{opacity:0;transform:translateY(.7rem) scale(.97)}}
+.card.ciel{transition:transform 1.15s cubic-bezier(.45,.05,.75,.3),opacity 1.15s ease-in .1s;transform:translateY(-120vh) scale(.9)!important;opacity:0}
+.rowaide{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:.4rem}.rowaide::before{content:""}.rowaide .aide{padding:.3rem .6rem;min-height:2.8rem;font-size:.95rem}.rowaide .aide .chap{width:1.7rem;height:1.7rem}
+.sortir{justify-self:end;background:none;border:0;color:var(--muted);font-size:.9rem;text-decoration:underline;text-underline-offset:3px;padding:.5rem .4rem}.sortir[hidden]{display:none}
+
+/* Mains jointes en immersion */
+#mains{position:absolute;inset:0;z-index:70;pointer-events:none;overflow:hidden;background:radial-gradient(circle at 50% 45%,rgba(255,244,214,.75),rgba(157,19,40,.18) 70%,transparent)}
+#mains.on{animation:mainsFond 1.8s ease both}
+@keyframes mainsFond{0%{opacity:0}22%{opacity:1}75%{opacity:1}100%{opacity:0}}
+#mains .grand{position:absolute;left:50%;top:44%;font-size:8rem;transform:translate(-50%,-50%) scale(.4);opacity:0;animation:mainsGrand 1.7s cubic-bezier(.2,.8,.2,1) both}
+@keyframes mainsGrand{0%{opacity:0;transform:translate(-50%,-30%) scale(.4)}30%{opacity:1;transform:translate(-50%,-50%) scale(1.05)}70%{opacity:1;transform:translate(-50%,-52%) scale(1)}100%{opacity:0;transform:translate(-50%,-70%) scale(1.1)}}
+#mains .petit{position:absolute;bottom:-3rem;opacity:0;animation:mainsPetit 1.6s ease-out both}
+@keyframes mainsPetit{0%{opacity:0;transform:translateY(0)}20%{opacity:.9}100%{opacity:0;transform:translateY(-95vh)}}
+/* Pages plein écran */
+.plein{position:absolute;inset:0;z-index:55;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:max(1.4rem,env(safe-area-inset-top,0px)) 1.6rem max(1.4rem,env(safe-area-inset-bottom,0px));animation:pleinIn .45s ease both;overflow-y:auto}
+.plein.sort{animation:pleinOut .35s ease both}
+@keyframes pleinIn{from{opacity:0;transform:translateY(.8rem)}}
+@keyframes pleinOut{to{opacity:0}}
+.plein .pc{width:100%;max-width:26rem;display:flex;flex-direction:column;align-items:center;text-align:center;gap:1.1rem;margin:auto 0}
+.plein h2{font-family:var(--f-title);font-weight:400;color:var(--red-deep);font-size:1.9rem;line-height:1.25;margin:0}
+.plein .retour{position:absolute;top:max(.9rem,env(safe-area-inset-top,0px));left:max(.9rem,env(safe-area-inset-left,0px));background:none;border:0;color:var(--muted);font-weight:700;font-size:1rem;padding:.6rem .7rem}
+.plein .opts{display:flex;flex-direction:column;gap:.8rem;width:100%;margin-top:.8rem}
+.plein .opts button{min-height:4rem;border-radius:.8rem;border:2px solid var(--red);background:#fff;color:var(--red);font-weight:700;font-size:1.2rem;transition:background .15s,color .15s,transform .12s}
+.plein .opts button:active{background:var(--red);color:#fff;transform:scale(.98)}
+#croix .pre{margin:0;color:var(--muted);letter-spacing:.06em}
+#croix h2{font-size:2.1rem}
+#croix .amen{margin:.2rem 0 1.2rem;font-family:var(--f-title);font-size:1.6rem;color:var(--red)}
+#fin .emb{width:3rem;height:3rem;color:var(--red)}
+#fin blockquote{margin:.4rem 0 0;font-size:1.2rem;line-height:1.6;color:var(--ink)}
+#fin .rev{animation:pleinIn .6s ease both}
+#fin .src{margin:0;color:var(--muted);font-size:.9rem}
+#fin .note{margin:0;color:var(--muted)}
+#fin .big{margin-top:.8rem}
+@media (max-height:700px){.plein h2{font-size:1.55rem}#croix h2{font-size:1.7rem}.plein .opts button{min-height:3.4rem}#fin blockquote{font-size:1.05rem}}
+@media (prefers-reduced-motion:reduce){#mains .petit{display:none}.card.ciel{transition-duration:.4s}}
+html.grand .nav3{display:none}
+html.grand #prieBtn{font-size:1rem;padding:.5rem .7rem;min-height:3.2rem;white-space:normal;line-height:1.2}
+html.grand .rowaide .aide{font-size:.85rem;min-height:2.6rem}
+html.grand .card.saint .text{font-size:.9rem}
+html.grand .card.saint h3{font-size:1.1rem}
+#prieBtn{font-size:1.05rem;align-self:stretch}.rowaide{align-self:stretch}
+@media (max-width:359px){#prieBtn{white-space:normal;line-height:1.2;font-size:.95rem;min-height:3rem}}
+@media (max-height:640px){.rowaide .aide{min-height:2.2rem;font-size:.8rem;white-space:nowrap;padding:.1rem .5rem}.rowaide .aide .chap{width:1.3rem;height:1.3rem}.nav3{display:none}#prieBtn{min-height:3rem}.card.saint .text{font-size:.9rem}.saint .emb{width:1.6rem;height:1.6rem}.card.saint h3{font-size:1.1rem}.card.saint .quand{font-size:.85rem}}
 </style>
 </head>
 <body>
@@ -421,8 +487,10 @@ nav.tabs .e{font-size:1.4rem}
       <div class="progress" id="progress" aria-hidden="true"></div>
       <div class="deck" id="deck" aria-live="polite"></div>
       <div class="actions" id="actions" hidden>
-        <p class="swipehint">Glissez la carte pour prier, à gauche ou à droite</p>
-        <button class="aide" id="aideBtn" type="button"><svg class="ic chap" aria-hidden="true"><use href="#i-chapelet"/></svg> Prières pour m'aider</button>
+        <div class="nav3"><button class="navbtn" id="precBtn" type="button" aria-label="Intention précédente">‹</button><p class="swipehint" id="posTxt"></p><button class="navbtn" id="suivBtn" type="button" aria-label="Intention suivante">›</button></div>
+        <button class="big primary" id="prieBtn" type="button"><span aria-hidden="true">🙏</span><span class="t">J'ai prié pour cette intention</span></button>
+        <div class="rowaide"><button class="aide" id="aideBtn" type="button"><svg class="ic chap" aria-hidden="true"><use href="#i-chapelet"/></svg> Prières pour m'aider</button>
+        <button class="sortir" id="sortirBtn" type="button" hidden>Sortir</button></div>
       </div>
       <p class="hint sr" id="deckHint"></p>
     </section>
@@ -462,7 +530,7 @@ nav.tabs .e{font-size:1.4rem}
       <h2 id="h-merci">Votre intention est confiée</h2>
       <p class="lead" id="merciLead"></p>
       <p class="quote" id="merciTexte"></p>
-      <button class="big primary" type="button" id="merciPrier"><span class="emo" aria-hidden="true">🙏</span> Prier pour les autres</button>
+      <button class="big primary" type="button" id="merciPrier"><span class="emo" aria-hidden="true">🙏</span> Prier avec vous</button>
       <button class="big outline" type="button" id="merciPartage">Partager l'application</button>
       <button class="linkbtn" type="button" id="merciEcrire">Confier une autre intention</button>
     </section>
@@ -497,10 +565,10 @@ nav.tabs .e{font-size:1.4rem}
   </nav>
 
   <div id="home" hidden>
-    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>Prier pour des intentions</small></button>
+    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>Prier avec vous</small></button>
     <button class="half ecrire" id="homeEcrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><b>Confier</b><small>Confier une intention</small></button>
     <div class="homebrand"><b>Ordre de Malte</b><small>Hospitalité française</small></div>
-    <button class="iconbtn homemenu" id="homeMenu" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu : à propos, confidentialité"><span class="cm" aria-hidden="true"><svg viewBox="0 0 24 24"><use href="#i-malte"/></svg><span class="emo">🙏</span></span></button>
+    <button class="iconbtn homemenu" id="homeMenu" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Menu : à propos, confidentialité"><svg class="bars" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
     <div class="homepop" id="homePop" hidden role="menu">
       <button type="button" role="menuitem" data-m="apropos">À propos</button>
       <button type="button" role="menuitem" data-m="confid">Confidentialité</button>
@@ -517,6 +585,39 @@ nav.tabs .e{font-size:1.4rem}
     <p class="splash-u">Intentions de prière</p>
   </div>
   <div id="halo"></div>
+  <div id="mains" hidden aria-hidden="true"></div>
+  <section class="plein" id="choix" hidden aria-labelledby="choixT">
+    <button class="retour" id="choixRetour" type="button">‹ Retour</button>
+    <div class="pc">
+      <h2 id="choixT">Aujourd'hui, je prie pour</h2>
+      <div class="opts" id="choixOpts">
+        <button type="button" data-n="1">1 intention</button>
+        <button type="button" data-n="5">5 intentions</button>
+        <button type="button" data-n="10">10 intentions</button>
+        <button type="button" data-n="0">Toutes les intentions</button>
+      </div>
+    </div>
+  </section>
+  <section class="plein" id="croix" hidden aria-labelledby="croixT">
+    <button class="retour" id="croixRetour" type="button">‹ Retour</button>
+    <div class="pc">
+      <p class="pre">Prenons un instant de silence</p>
+      <h2 id="croixT">Au nom du Père,<br>et du Fils,<br>et du Saint-Esprit.</h2>
+      <p class="amen">Amen.</p>
+      <button class="big primary" id="croixBtn" type="button">Commencer la prière</button>
+    </div>
+  </section>
+  <section class="plein" id="fin" hidden aria-labelledby="finTitre">
+    <div class="pc">
+      <svg class="emb" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-malte"/></svg>
+      <h2 id="finTitre"></h2>
+      <p class="note" id="finNote" hidden></p>
+      <blockquote id="finTexte"></blockquote>
+      <p class="src" id="finSource"></p>
+      <button class="big primary" id="finBtn" type="button">Terminer</button>
+      <button class="linkbtn" id="finAutre" type="button">Une autre prière</button>
+    </div>
+  </section>
   <div class="backdrop" id="sheet" hidden>
     <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
       <div class="grab"></div>
@@ -592,10 +693,10 @@ nav.tabs .e{font-size:1.4rem}
     $("main").scrollTop = 0;
     if (v === "benevoles") renderBenevoles();
   }
-  document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("click", () => show(b.dataset.v)));
+  document.querySelectorAll("nav.tabs button").forEach((b) => b.addEventListener("click", () => (b.dataset.v === "prier" ? ouvrirPrier() : show(b.dataset.v))));
   $("benBtn").onclick = () => show("benevoles");
   $("backBtn").onclick = () => show("ecrire");
-  $("merciPrier").onclick = () => show("prier");
+  $("merciPrier").onclick = () => ouvrirPrier();
   $("merciEcrire").onclick = () => { show("ecrire"); $("texte").focus(); };
 
   // Taille du texte
@@ -612,7 +713,7 @@ nav.tabs .e{font-size:1.4rem}
   let tRideau = 0;
   function accueil() { clearTimeout(tRideau); $("home").classList.remove("leave"); $("home").hidden = false; $("homePrier").focus({ preventScroll: true }); }
   function entrer(v) { const h = $("home"); h.classList.add("leave"); show(v); clearTimeout(tRideau); tRideau = setTimeout(() => { h.hidden = true; h.classList.remove("leave"); }, 440); }
-  $("homePrier").onclick = () => entrer("prier");
+  $("homePrier").onclick = () => ouvrirChoix();
   $("homeEcrire").onclick = () => { entrer("ecrire"); };
   $("homeBtn").onclick = accueil;
   (function ouverture() {
@@ -742,119 +843,167 @@ nav.tabs .e{font-size:1.4rem}
     return { id: "saint-" + d.getFullYear() + "-" + cle, saint: true, nom: x[1], texte: x[2], fete, quand: fete ? "Fête aujourd'hui" : "Fête le " + (j === 1 ? "1er" : j) + " " + MOIS[m - 1], prieres: 0 };
   }
 
-  // ---------- Prier : pile de cartes ----------
-  const file = () => {
-    const q = visibles().filter((i) => !i.lourdes && (S.revoir || !S.deja.has(i.id)) && !S.passees.has(i.id)).sort((a, b) => b.creeLe - a.creeLe);
-    const sd = saintDuJour(); if (!S.deja.has(sd.id) && !S.passees.has(sd.id)) q.unshift(sd);
+  // ---------- Prier : parcours (choix → signe de croix → cartes → clôture) ----------
+  const P = { phase: null, n: 0, liste: [], idx: 0, faits: new Set(), occupe: false };
+  const CLOTURES = [
+    ["Que le Seigneur nous bénisse, qu'il nous garde de tout mal et nous conduise à la vie éternelle. Amen.", "Bénédiction traditionnelle"],
+    ["Je vous salue, Marie, pleine de grâce ; le Seigneur est avec vous. Vous êtes bénie entre toutes les femmes, et Jésus, le fruit de vos entrailles, est béni. Sainte Marie, Mère de Dieu, priez pour nous, pauvres pécheurs, maintenant et à l'heure de notre mort. Amen.", "Je vous salue, Marie"],
+    ["Seigneur, faites de moi un instrument de votre paix : là où est la haine, que je mette l'amour ; là où est l'offense, que je mette le pardon ; là où est le doute, que je mette la foi ; là où est le désespoir, que je mette l'espérance ; là où sont les ténèbres, que je mette votre lumière ; là où est la tristesse, que je mette la joie. Amen.", "Prière pour la paix, attribuée à saint François"],
+    ["Souvenez-vous, ô très miséricordieuse Vierge Marie, qu'on n'a jamais entendu dire qu'aucun de ceux qui ont eu recours à votre protection, imploré votre assistance, réclamé votre secours, ait été abandonné. Amen.", "Souvenez-vous (Memorare)"],
+    ["Gloire au Père, et au Fils, et au Saint-Esprit, comme il était au commencement, maintenant et toujours, et dans les siècles des siècles. Amen.", "Gloire au Père"],
+    ["Sous l'abri de ta miséricorde, nous nous réfugions, sainte Mère de Dieu : ne repousse pas nos prières quand nous sommes dans l'épreuve, mais de tous les dangers délivre-nous toujours, Vierge glorieuse et bénie.", "Sous l'abri de ta miséricorde"],
+    ["Allez dans la paix du Christ. Nous rendons grâce à Dieu.", "Envoi de la messe"],
+    ["Seigneur Jésus, apprends-nous à être généreux, à te servir comme tu le mérites, à donner sans compter, à combattre sans souci des blessures, à travailler sans chercher le repos, à nous dépenser sans attendre d'autre récompense que celle de savoir que nous faisons ta volonté. Amen.", "Prière de saint Ignace de Loyola"],
+    ["Notre Père, qui es aux cieux, que ton nom soit sanctifié, que ton règne vienne, que ta volonté soit faite sur la terre comme au ciel. Donne-nous aujourd'hui notre pain de ce jour. Pardonne-nous nos offenses, comme nous pardonnons aussi à ceux qui nous ont offensés. Et ne nous laisse pas entrer en tentation, mais délivre-nous du Mal. Amen.", "Notre Père"],
+  ];
+  let derniereCloture = -1;
+  const MAINS_N = 7;
+
+  function liste() {
+    const q = visibles().filter((i) => !i.lourdes && !S.deja.has(i.id)).sort((a, b) => b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)));
+    const sd = saintDuJour(); if (!S.deja.has(sd.id)) q.unshift(sd);
     return q;
+  }
+  const plein = (id, on) => { const e = $(id); if (on) { e.hidden = false; e.classList.remove("sort"); void e.offsetWidth; } else if (!e.hidden) { e.classList.add("sort"); setTimeout(() => { if (e.classList.contains("sort")) { e.hidden = true; e.classList.remove("sort"); } }, 380); } };
+
+  function ouvrirPrier() { if (P.phase === "deck" || P.phase === "attente") show("prier"); else ouvrirChoix(); }
+  function ouvrirChoix() {
+    P.phase = "choix"; plein("fin", false); plein("croix", false); plein("choix", true); $("choixOpts").firstElementChild.focus({ preventScroll: true });
+  }
+  function ouvrirCroix(n) { P.n = n; P.phase = "croix"; plein("croix", true); $("croixBtn").focus({ preventScroll: true }); }
+  function commencer() {
+    plein("croix", false); plein("choix", false);
+    P.faits = new Set(); P.idx = 0; P.liste = [];
+    const home = !$("home").hidden;
+    if (home) entrer("prier"); else show("prier");
+    if (!S.loaded) { P.phase = "attente"; $("deck").innerHTML = ""; $("deck").append(el("div", "skel")); $("actions").hidden = true; return; }
+    lancer();
+  }
+  function lancer() {
+    const q = liste();
+    if (q.length === 0) { cloture(S.erreur && !visibles().length ? "erreur" : "vide"); return; }
+    P.liste = P.n ? q.slice(0, P.n) : q; P.idx = 0; P.phase = "deck"; $("actions").hidden = false; renderCarte(0);
+  }
+  function renderCarte(entree) {
+    const deck = $("deck"); deck.innerHTML = "";
+    const cur = P.liste[P.idx], nxt = P.liste[P.idx + 1];
+    if (nxt) deck.append(carte(nxt, 1));
+    const c = carte(cur, 0); deck.append(c); if (entree) c.classList.add("entre" + (entree > 0 ? "D" : "G"));
+    const fait = P.faits.has(cur.id); const b = $("prieBtn"); b.disabled = fait; b.querySelector("span.t").textContent = fait ? "Intention déjà confiée au Seigneur" : "J'ai prié pour cette intention";
+    $("posTxt").textContent = "Intention " + (P.idx + 1) + (P.n ? " sur " + P.liste.length : "");
+    $("precBtn").disabled = P.idx === 0; $("suivBtn").disabled = P.idx >= P.liste.length - 1;
+    $("sortirBtn").hidden = false; $("deckHint").textContent = $("posTxt").textContent;
+    bindDrag(c);
+  }
+  function aller(dir) {
+    if (P.occupe || P.phase !== "deck") return;
+    const j = P.idx + (dir > 0 ? 1 : -1); const c = $("deck").lastElementChild;
+    if (j < 0 || j >= P.liste.length) { if (c) { c.classList.remove("ressort", "glisse"); c.classList.add("anim", "ressort"); c.style.transform = ""; } return; }
+    P.occupe = true; if (c) { c.classList.remove("anim", "ressort"); c.classList.add("glisse"); c.style.transform = "translateX(" + dir * 120 + "%)"; c.style.opacity = "0"; }
+    setTimeout(() => { P.idx = j; P.occupe = false; renderCarte(dir); }, 330);
+  }
+  function mains() {
+    const m = $("mains"); m.innerHTML = ""; m.hidden = false;
+    m.append(el("span", "grand", "🙏"));
+    for (let k = 0; k < MAINS_N; k++) { const s = el("span", "petit", "🙏"); s.style.left = (8 + Math.random() * 84) + "%"; s.style.animationDelay = (k * 90) + "ms"; s.style.fontSize = (1.6 + Math.random() * 1.6) + "rem"; m.append(s); }
+    m.classList.remove("on"); void m.offsetWidth; m.classList.add("on");
+    clearTimeout(mains.t); mains.t = setTimeout(() => { m.hidden = true; m.innerHTML = ""; }, 1900);
+  }
+  async function aPrie() {
+    if (P.occupe || P.phase !== "deck") return; const i = P.liste[P.idx]; if (!i || P.faits.has(i.id)) return;
+    if (!S.db && !i.saint && !i.demo) { toast("Connexion impossible pour le moment"); return; }
+    P.occupe = true; P.faits.add(i.id);
+    const nouvelle = !S.deja.has(i.id); S.deja.add(i.id); ecrire("prie", [...S.deja]);
+    vibre(30); mains();
+    const c = $("deck").lastElementChild; if (c) { c.classList.remove("anim", "ressort", "entreD", "entreG"); c.classList.add("ciel"); }
+    $("prieBtn").disabled = true;
+    const suite = () => {
+      P.occupe = false;
+      let j = -1; for (let k = P.idx + 1; k < P.liste.length; k++) if (!P.faits.has(P.liste[k].id)) { j = k; break; }
+      if (j < 0) for (let k = 0; k < P.idx; k++) if (!P.faits.has(P.liste[k].id)) { j = k; break; }
+      if (j < 0) { cloture("fin"); return; }
+      P.idx = j; renderCarte(1);
+    };
+    setTimeout(suite, 1250);
+    try { if (nouvelle && !i.saint && !i.demo) await FB().incr(i.id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
+  }
+  function cloture(motif) {
+    P.phase = "fin"; P.occupe = false; $("sortirBtn").hidden = true;
+    const titre = { fin: "Merci pour votre prière", sortie: "Merci pour votre prière", vide: "Merci pour vos prières", erreur: "Impossible de charger les intentions" }[motif];
+    const note = { fin: "", sortie: "", vide: "Vous avez prié pour toutes les intentions. Revenez plus tard.", erreur: "Vérifiez votre connexion internet puis réessayez." }[motif];
+    $("finTitre").textContent = titre; $("finNote").textContent = note; $("finNote").hidden = !note;
+    $("finAutre").hidden = motif === "erreur"; $("finBtn").textContent = motif === "erreur" ? "Réessayer" : "Terminer"; $("finBtn").dataset.m = motif;
+    if (motif !== "erreur") messageFin(); else { $("finTexte").textContent = ""; $("finSource").textContent = ""; }
+    plein("fin", true); $("finBtn").focus({ preventScroll: true });
+  }
+  function messageFin() {
+    let k; do { k = Math.floor(Math.random() * CLOTURES.length); } while (k === derniereCloture && CLOTURES.length > 1); derniereCloture = k;
+    const t = $("finTexte"); t.classList.remove("rev"); void t.offsetWidth; t.textContent = CLOTURES[k][0]; $("finSource").textContent = CLOTURES[k][1]; t.classList.add("rev");
+  }
+  $("choixOpts").querySelectorAll("button").forEach((b) => { b.onclick = () => ouvrirCroix(Number(b.dataset.n)); });
+  $("choixRetour").onclick = () => { plein("choix", false); P.phase = null; };
+  $("croixBtn").onclick = commencer;
+  $("croixRetour").onclick = () => { plein("croix", false); P.phase = "choix"; $("choixOpts").firstElementChild.focus({ preventScroll: true }); };
+  $("prieBtn").onclick = aPrie;
+  $("precBtn").onclick = () => aller(-1); $("suivBtn").onclick = () => aller(1);
+  $("sortirBtn").onclick = () => cloture("sortie");
+  $("finAutre").onclick = messageFin;
+  $("finBtn").onclick = () => {
+    if ($("finBtn").dataset.m === "erreur") { location.reload(); return; }
+    plein("fin", false); P.phase = null; $("deck").innerHTML = ""; accueil();
   };
-  let dragging = false, signature = "";
+
   function carteSaint(i, niveau) {
     const c = el("article", "card saint" + (niveau ? " l" + niveau : "")); c.dataset.id = i.id;
-    const head = el("div", "head"); head.append(el("span", "chip", "Intention du jour"));
     const emb = el("div"); emb.innerHTML = '<svg class="emb" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-malte"/></svg>';
     const h = el("h3", "", i.nom), q = el("p", "quand", i.quand);
     const txt = el("div", "text"); txt.textContent = i.texte;
     const foot = el("div", "foot"); foot.textContent = "Saints de l'Ordre de Malte";
-    c.append(head, emb.firstChild, h, q, txt, foot, el("span", "stamp")); return c;
+    c.append(emb.firstChild, h, q, txt, foot); return c;
   }
   function carte(i, niveau) {
     if (i.saint) return carteSaint(i, niveau);
     const c = el("article", "card" + (niveau ? " l" + niveau : "")); c.dataset.id = i.id;
-    const head = el("div", "head");
-    if (i.lourdes) head.append(el("span", "chip", "Grotte de Lourdes"));
-    head.append(el("span", "count", IC("hands") + '<span class="n">' + (i.prieres || 0) + "</span>"));
-    head.lastChild.setAttribute("aria-label", personnes(i.prieres || 0));
     const txt = el("div", "text"); txt.textContent = i.texte;
     const foot = el("div", "foot"); const who = el("span"); who.textContent = (i.auteur || "Anonyme") + " · " + depuis(i.creeLe);
     const rb = el("button", "report"); rb.type = "button"; rb.textContent = "Signaler";
     rb.onclick = (e) => { e.stopPropagation(); if (rb.classList.contains("confirm")) { signaler(i.id); return; }
       rb.classList.add("confirm"); rb.textContent = "Confirmer le signalement ?"; setTimeout(() => { rb.classList.remove("confirm"); rb.textContent = "Signaler"; }, 4000); };
     foot.append(who, rb);
-    const s1 = el("span", "stamp");
-    c.append(head, txt, foot, s1); return c;
+    c.append(txt, foot); return c;
   }
   function renderDeck() {
-    const q = file(), top3 = q.slice(0, 3);
-    const sig = [S.loaded, S.erreur, S.passees.size, ...top3.map((i) => i.id + ":" + i.prieres)].join("|");
     renderGrotte(); renderMine();
-    if (dragging || sig === signature) return; signature = sig;
-    const deck = $("deck"); const avant = deck.children.length > 1 ? deck.children[deck.children.length - 2].dataset.id : null; deck.innerHTML = "";
-    $("actions").hidden = false; document.querySelector(".swipehint").hidden = top3.length === 0; $("deckHint").textContent = "";
-    const prog = $("progress"); prog.innerHTML = "";
-    if (!S.loaded) { deck.append(el("div", "skel")); return; }
-    if (top3.length === 0) {
-      const vide = el("div", "empty"); const total = visibles().filter((i) => !i.lourdes).length;
-      const logo = el("img"); logo.src = LOGO; logo.alt = "";
-      const t = S.erreur && !total ? "Impossible de charger les intentions" : total === 0 ? "Aucune intention pour l'instant" : "Merci pour vos prières";
-      const p = S.erreur && !total ? "Vérifiez votre connexion internet puis réessayez." : total === 0 ? "Écrivez la première : d'autres prieront avec vous." : "Vous avez prié pour toutes les intentions. Revenez plus tard.";
-      vide.append(logo, el("h3", "", t), el("p", "", p));
-      const b = el("button", "big primary"); b.type = "button";
-      if (S.erreur && !total) { b.textContent = "Réessayer"; b.onclick = () => location.reload(); } else { b.textContent = "Confier une intention"; b.onclick = () => show("ecrire"); }
-      vide.append(b);
-      if (total) { vide.append(el("p", "revoirhint", "← Glissez vers la gauche pour revoir les intentions")); bindRevoir(vide); }
-      deck.append(vide); return;
-    }
-    top3.slice().reverse().forEach((i, k, arr) => deck.append(carte(i, arr.length - 1 - k)));
-    const n = Math.min(q.length, 7); for (let k = 0; k < n; k++) prog.append(el("i", k === 0 ? "on" : ""));
-    $("deckHint").textContent = q.length === 1 ? "C'est la dernière intention" : q.length + " intentions vous attendent";
-    if (avant && deck.lastElementChild.dataset.id === avant) deck.lastElementChild.classList.add("promote");
-    bindDrag(deck.lastElementChild);
-  }
-  function revoir() { S.revoir = true; S.passees.clear(); signature = ""; renderDeck(); }
-  function bindRevoir(box) {
-    let x0 = null, dx = 0;
-    box.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; box.setPointerCapture(e.pointerId); box.classList.remove("anim"); });
-    box.addEventListener("pointermove", (e) => { if (x0 === null) return; dx = e.clientX - x0; box.style.transform = "translateX(" + dx + "px)"; });
-    const fin = () => { if (x0 === null) return; x0 = null; if (Math.abs(dx) > 80) { box.classList.add("anim"); box.style.transform = "translateX(" + (dx < 0 ? -120 : 120) + "%)"; setTimeout(revoir, 260); } else { box.classList.add("anim", "ressort"); box.style.transform = ""; } };
-    box.addEventListener("pointerup", fin); box.addEventListener("pointercancel", fin);
+    if (P.phase === "attente" && S.loaded) lancer();
   }
   function renderGrotte() { if (!$("bandeau")) return;
     const n = visibles().filter((i) => i.lourdes).length; $("bandeau").hidden = n === 0;
     if (n) $("grotteTxt").innerHTML = "<b>" + n + (n > 1 ? " intentions" : " intention") + "</b> pour la Grotte";
   }
   function bindDrag(card) {
-    let x0 = null, dx = 0, id = null, t0 = 0, vx = 0, tPrev = 0, xPrev = 0;
-    const oui = card.querySelector(".stamp"); const pill = card.querySelector(".count"), nn = pill && pill.querySelector(".n"), base = nn ? Number(nn.textContent) || 0 : 0;
-    const dejaPrie = S.deja.has(card.dataset.id); const preview = (p) => { if (!pill) return; pill.style.transform = p > 0 ? "scale(" + (1 + p * .4) + ")" : ""; const h = p > .55; pill.classList.toggle("hot", h); nn.textContent = h && !dejaPrie ? base + 1 : base; }; const suivante = $("deck").children[$("deck").children.length - 2];
-    card.addEventListener("pointerdown", (e) => { if (e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; dragging = true; t0 = tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort"); });
+    let x0 = null, dx = 0, id = null, vx = 0, tPrev = 0, xPrev = 0;
+    card.addEventListener("pointerdown", (e) => { if (P.occupe || e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort", "entreD", "entreG"); });
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
       const dt = e.timeStamp - tPrev; if (dt > 0) { vx = (e.clientX - xPrev) / dt; tPrev = e.timeStamp; xPrev = e.clientX; }
       card.style.transform = "translateX(" + dx + "px)";
-      preview(Math.max(0, Math.min(1, Math.abs(dx) / 110))); oui.style.opacity = Math.max(0, Math.min(1, (Math.abs(dx) - 20) / 110));
-      if (suivante && suivante.classList.contains("l1")) suivante.style.transform = "translateY(" + (0.8 - Math.min(Math.abs(dx) / 150, 1) * 0.8) + "rem) scale(" + (0.95 + Math.min(Math.abs(dx) / 150, 1) * 0.05) + ")";
     });
     const fin = () => {
-      if (x0 === null) return; x0 = null; dragging = false;
-      if (Math.abs(dx) > 90 || (Math.abs(dx) > 30 && Math.abs(vx) > 0.6)) prier(card.dataset.id, card, dx < 0 ? -1 : 1);
-      else { preview(0); card.classList.add("anim", "ressort"); card.style.transform = ""; oui.style.opacity = 0; if (suivante) suivante.style.transform = ""; signature = ""; }
+      if (x0 === null) return; x0 = null;
+      if (Math.abs(dx) > 90 || (Math.abs(dx) > 30 && Math.abs(vx) > 0.6)) aller(dx > 0 ? 1 : -1);
+      else { card.classList.add("anim", "ressort"); card.style.transform = ""; }
     };
     card.addEventListener("pointerup", fin); card.addEventListener("pointercancel", fin);
   }
-  function envoler(card, dir) {
-    card.classList.remove("anim", "ressort"); card.classList.add("glisse");
-    card.style.transform = "translateX(" + dir * 120 + "%)"; card.style.opacity = "0";
-  }
-
-  async function prier(id, card, dir) {
-    card = card || $("deck").lastElementChild; if (!card || !card.classList.contains("card") || card.dataset.busy) return; card.dataset.busy = 1; dragging = true;
-    const i = par(id); if (!S.db && !(i && i.saint)) { toast("Connexion impossible pour le moment"); delete card.dataset.busy; return; }
-    const nouvelle = !S.deja.has(id); S.passees.add(id); S.deja.add(id); ecrire("prie", [...S.deja]); if (i && nouvelle && !i.saint) i.prieres = (i.prieres || 0) + 1;
-    const pill = card.querySelector(".count");     if (pill) { pill.style.transform = ""; pill.classList.remove("hot"); pill.querySelector(".n").textContent = i ? i.prieres : ""; if (nouvelle) pill.append(el("span", "plus", "+1")); void pill.offsetWidth; pill.classList.add("fire"); }
-    vibre(30); $("halo").classList.remove("on"); void $("halo").offsetWidth; $("halo").classList.add("on");
-    envoler(card, dir || 1); setTimeout(() => { dragging = false; signature = ""; renderDeck(); }, 520);
-    try { if (nouvelle && !(i && (i.saint || i.demo))) await FB().incr(id, "prieres"); } catch (e) { toast("La prière n'a pas pu être comptée"); }
-  }
   async function signaler(id) {
-    if (String(id).startsWith("demo-")) { S.passees.add(id); signature = ""; renderDeck(); toast("Merci, l'intention est signalée"); return; }
+    const retire = () => { const k = P.liste.findIndex((x) => x.id === id); if (k < 0) return; P.liste.splice(k, 1); if (!P.liste.length) { cloture("fin"); return; } if (P.idx >= P.liste.length) P.idx = P.liste.length - 1; renderCarte(1); };
+    if (String(id).startsWith("demo-")) { retire(); toast("Merci, l'intention est signalée"); return; }
     if (!S.db) return; S.signales.add(id); ecrire("signales", [...S.signales]);
-    try { await FB().incr(id, "signalements"); S.passees.add(id); signature = ""; renderDeck(); toast("Merci, l'intention est signalée"); } catch (e) { toast("Le signalement n'a pas pu être envoyé"); }
+    try { await FB().incr(id, "signalements"); retire(); toast("Merci, l'intention est signalée"); } catch (e) { toast("Le signalement n'a pas pu être envoyé"); }
   }
   document.addEventListener("keydown", (e) => {
-    if (vue !== "prier" || !$("sheet").hidden || /input|textarea/i.test(e.target.tagName)) return;
-    const c = $("deck").lastElementChild; if (!c || !c.classList.contains("card")) return;
-    if (e.key === "ArrowRight") prier(c.dataset.id, c, 1); if (e.key === "ArrowLeft") prier(c.dataset.id, c, -1);
+    if (vue !== "prier" || P.phase !== "deck" || !$("sheet").hidden || /input|textarea/i.test(e.target.tagName)) return;
+    if (e.key === "ArrowRight") aller(1); if (e.key === "ArrowLeft") aller(-1);
   });
 
   // ---------- Écrire ----------
