@@ -680,6 +680,7 @@ html.grand .card.saint h3{font-size:1.1rem}
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </div>
 
+<script src="exemples.js"></script>
 <script>
 (() => {
   const $ = (id) => document.getElementById(id);
@@ -716,6 +717,8 @@ html.grand .card.saint h3{font-size:1.1rem}
     ["Pour notre pape, nos évêques et tous nos prêtres. Que le Seigneur les garde.", null, 320, 26],
     ["Pour moi, qui ai du mal à prier en ce moment. Que la lumière revienne.", null, 380, 9],
   ].map((x, k) => ({ id: "demo-" + k, texte: x[0], auteur: x[1], lourdes: false, creeLe: Date.now() - x[2] * 6e4 * 3, prieres: x[3], signalements: 0, masque: false, demo: true }));
+  // + plus de 200 intentions d'exemple dans exemples.js (mêmes règles : ignorées si DEMO = false)
+  (window.DEMO_EXTRA || []).forEach((x, k) => DEMO_LISTE.push({ id: "demo-x" + k, texte: x[0], auteur: x[1], lourdes: false, creeLe: Date.now() - x[2] * 6e4, prieres: x[3], signalements: 0, masque: false, demo: true }));
   const visibles = () => S.items.filter((i) => !i.masque).concat(DEMO ? DEMO_LISTE : []);
   const par = (id) => (id === saintDuJour().id ? saintDuJour() : visibles().find((i) => i.id === id));
   const compte = (id) => (par(id) || {}).prieres || 0;
@@ -976,7 +979,7 @@ html.grand .card.saint h3{font-size:1.1rem}
     if (nxt) deck.append(carte(nxt, 1));
     const c = carte(cur, 0); deck.append(c); if (entree) c.classList.add("entre" + (entree > 0 ? "D" : "G"));
     const fait = P.faits.has(cur.id); const b = $("prieBtn"); b.disabled = fait; b.querySelector("span.t").textContent = fait ? "Intention déjà confiée au Seigneur" : "J'ai prié pour cette intention";
-    $("posTxt").textContent = "Intention " + (P.idx + 1) + (P.n ? " sur " + P.liste.length : "");
+    $("posTxt").textContent = "Intention " + (P.idx + 1) + " sur " + P.liste.length;
     $("precBtn").disabled = P.idx === 0; $("suivBtn").disabled = P.idx >= P.liste.length - 1;
     $("sortirBtn").hidden = false; $("deckHint").textContent = $("posTxt").textContent;
     bindDrag(c);
@@ -985,7 +988,7 @@ html.grand .card.saint h3{font-size:1.1rem}
     if (P.occupe || P.phase !== "deck") return;
     const j = P.idx + (dir > 0 ? 1 : -1); const c = $("deck").lastElementChild;
     if (j < 0 || j >= P.liste.length) { if (c) { c.classList.remove("ressort", "glisse"); c.classList.add("anim", "ressort"); c.style.transform = ""; } return; }
-    P.occupe = true; if (c) { c.classList.remove("anim", "ressort"); c.classList.add("glisse"); c.style.transform = "translateX(" + dir * 120 + "%)"; c.style.opacity = "0"; }
+    P.occupe = true; if (c) { c.classList.remove("anim", "ressort"); c.classList.add("glisse"); c.style.transform = "translateX(" + -dir * 120 + "%)"; c.style.opacity = "0"; }
     setTimeout(() => { P.idx = j; P.occupe = false; renderCarte(dir); }, 330);
   }
   // Élévation : les mains jointes présentent l'intention, puis la carte monte jusqu'à la lumière du haut de l'écran.
@@ -1099,7 +1102,7 @@ html.grand .card.saint h3{font-size:1.1rem}
   }
   function bindDrag(card) {
     let x0 = null, dx = 0, id = null, vx = 0, tPrev = 0, xPrev = 0;
-    card.addEventListener("pointerdown", (e) => { if (P.occupe || e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort", "entreD", "entreG"); });
+    card.addEventListener("pointerdown", (e) => { if (P.occupe || e.target.closest("button")) return; x0 = e.clientX; dx = 0; id = e.pointerId; tPrev = e.timeStamp; xPrev = e.clientX; card.setPointerCapture(id); card.classList.remove("anim", "ressort", "entreD", "entreG"); card.style.animation = "none"; });
     card.addEventListener("pointermove", (e) => {
       if (x0 === null || e.pointerId !== id) return; dx = e.clientX - x0;
       const dt = e.timeStamp - tPrev; if (dt > 0) { vx = (e.clientX - xPrev) / dt; tPrev = e.timeStamp; xPrev = e.clientX; }
@@ -1107,7 +1110,7 @@ html.grand .card.saint h3{font-size:1.1rem}
     });
     const fin = () => {
       if (x0 === null) return; x0 = null;
-      if (Math.abs(dx) > 90 || (Math.abs(dx) > 30 && Math.abs(vx) > 0.6)) aller(dx > 0 ? 1 : -1);
+      if (Math.abs(dx) > 70 || (Math.abs(dx) > 30 && Math.abs(vx) > 0.5)) aller(dx < 0 ? 1 : -1);
       else { card.classList.add("anim", "ressort"); card.style.transform = ""; }
     };
     card.addEventListener("pointerup", fin); card.addEventListener("pointercancel", fin);
