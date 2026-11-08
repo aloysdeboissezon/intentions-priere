@@ -508,20 +508,9 @@ header.top .iconbtn,#home .iconbtn{min-width:48px;height:48px;font-size:16px;pad
 #mains .rayons{display:none}
 </style>
 <style>
-/* v35 : finitions de l'accueil */
-.half.prier{background:linear-gradient(172deg,#a8162d 0%,#8f1126 100%)}
-.half.ecrire{background:linear-gradient(#ffffff,#faf7f8)}
-.half.ecrire::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,transparent,#d9b865 30%,#e9cf8e 50%,#d9b865 70%,transparent)}
-#home .half .ic{width:4.6rem;height:4.6rem;padding:1.05rem;border:1.2px solid currentColor;border-radius:50%;stroke-width:1.25;margin:0 0 .5rem;opacity:.95}
-.half.prier .ic{color:#fff;stroke:#fff;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.07)}
-.half.ecrire .ic{border-color:rgba(157,19,40,.4);background:rgba(157,19,40,.04)}
-.half b{letter-spacing:.015em}
-.half small{text-transform:uppercase;letter-spacing:.16em;font-size:.72rem!important;opacity:.85;font-weight:700}
-html.grand .half small{font-size:.72rem!important}
-.homebrand small::after{content:"";display:block;width:34px;height:1.5px;margin:9px auto 0;background:#e3c77f}
-#home .iconbtn{border-radius:14px;border:1px solid rgba(255,255,255,.5);background:rgba(255,255,255,.12);box-shadow:0 1px 0 rgba(255,255,255,.18) inset}
-nav.tabs .ic{stroke-width:1.6}
-/* v35 : bas de la page Prier plus compact */
+/* v36 : bas de la page Prier plus compact */
+#croix h2{margin-bottom:.9rem}
+#croix .croixp{margin:0 0 1.6rem;font-family:var(--f-title);font-size:1.35rem;line-height:1.4;color:var(--ink)}
 #prieBtn{min-height:3.1rem!important;padding:.35rem .9rem!important;font-size:1.02rem!important}
 .nav3 .navbtn{width:1.8rem;height:1.8rem;font-size:1.35rem;padding:0 0 .1rem}
 .nav3 .swipehint{font-size:.8rem}
@@ -537,7 +526,6 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-hands" viewBox="0 0 24 24"><text x="12" y="19.2" font-size="19" text-anchor="middle" fill="#000" stroke="none" stroke-width="0">🙏</text></symbol>
-  <symbol id="i-prier" viewBox="0 0 24 24"><path d="M12 2.4c1.9 2.3 2.8 3.8 2.8 5.3a2.8 2.8 0 0 1-5.6 0c0-1.5.9-3 2.8-5.3z"/><path d="M12 11v1.6M8.4 12.6h7.2v7.9H8.4zM6 21h12"/></symbol>
   <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20l1-4.2L16.2 4.6a1.6 1.6 0 0 1 2.2 0l1 1a1.6 1.6 0 0 1 0 2.2L8.2 19z M14.5 6.3l3.2 3.2"/></symbol>
   <symbol id="i-mic" viewBox="0 0 24 24"><rect x="8" y="1.8" width="8" height="11" rx="4"/><path d="M8.2 5.2h7.6M8 7.6h8M8.2 10h7.6M12 1.8v11M5 9.5v1.2a7 7 0 0 0 14 0V9.5M12 17.7v3M8.5 21.5h7"/></symbol>
   <symbol id="i-book" viewBox="0 0 24 24"><path d="M3.5 5.5h6A2.5 2.5 0 0 1 12 8v11.5a2.5 2.5 0 0 0-2.5-2.5h-6zM20.5 5.5h-6A2.5 2.5 0 0 0 12 8v11.5a2.5 2.5 0 0 1 2.5-2.5h6z"/></symbol>
@@ -633,12 +621,12 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   </main>
 
   <nav class="tabs" data-sel="prier" role="tablist" aria-label="Écrans">
-    <button role="tab" aria-selected="true" data-v="prier" type="button"><svg class="ic" aria-hidden="true"><use href="#i-prier"/></svg>Prier</button>
+    <button role="tab" aria-selected="true" data-v="prier" type="button"><span class="emo" aria-hidden="true">🙏</span>Prier</button>
     <button role="tab" aria-selected="false" data-v="ecrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg>Confier</button>
   </nav>
 
   <div id="home" hidden>
-    <button class="half prier" id="homePrier" type="button"><svg class="ic" aria-hidden="true"><use href="#i-prier"/></svg><b>Prier</b><small>Prier avec vous</small></button>
+    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>Prier avec vous</small></button>
     <button class="half ecrire" id="homeEcrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><b>Confier</b><small>Confier une intention</small></button>
     <div class="homebrand"><b>Ordre de Malte</b><small>Hospitalité française</small></div>
     <button class="iconbtn homemenu" id="homeMenu" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Paramètres"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true" style="width:1.6rem;height:1.6rem"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8l1.5 2.4 2.8-.6.9 2.7 2.7.9-.6 2.8 2.4 1.5-2.4 1.5.6 2.8-2.7.9-.9 2.7-2.8-.6L12 21.2l-1.5-2.4-2.8.6-.9-2.7-2.7-.9.6-2.8L2.3 12l2.4-1.5-.6-2.8 2.7-.9.9-2.7 2.8.6z"/></svg></button>
@@ -673,7 +661,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   <section class="plein" id="croix" hidden aria-labelledby="croixT">
     <button class="retour" id="croixRetour" type="button">‹ Retour</button>
     <div class="pc">
-      <h2 id="croixT">Un instant de silence</h2>
+      <h2 id="croixT">Préparons notre cœur à la prière</h2>
+      <p class="croixp">Au nom du Père, du Fils, et du Saint-Esprit</p>
       <button class="big primary" id="croixBtn" type="button">Commencer</button>
     </div>
   </section>
