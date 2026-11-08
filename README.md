@@ -13,3 +13,6 @@ Application web (sans compte, en français) pour confier une intention de prièr
 - Changer le code bénévole : fonction `admin_changer_code(ancien, nouveau)` (10 caractères minimum).
 - La clé présente dans `index.html` est la clé publique « anon » : elle est faite pour être visible.
 - Un projet Supabase gratuit se met en pause après 7 jours sans activité : prévoir un réveil automatique avant le pèlerinage.
+
+## Version
+v33 (novembre 2026) : accueil épuré, paramètres, micro années 50, instant de silence, 25 phrases du missel.
