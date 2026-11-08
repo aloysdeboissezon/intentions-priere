@@ -15,4 +15,4 @@ Application web (sans compte, en français) pour confier une intention de prièr
 - Un projet Supabase gratuit se met en pause après 7 jours sans activité : prévoir un réveil automatique avant le pèlerinage.
 
 ## Version
-v33 (novembre 2026) : accueil épuré, paramètres, micro années 50, instant de silence, 25 phrases du missel.
+v34 (novembre 2026) : accueil épuré, paramètres, micro années 50, instant de silence, 5 phrases de sortie du missel.
