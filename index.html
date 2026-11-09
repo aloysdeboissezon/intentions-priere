@@ -396,7 +396,6 @@ nav.tabs .e{font-size:1.4rem}
 .seal img{height:3.5rem;width:auto}
 @keyframes seal{from{opacity:0;transform:scale(.4)}}
 #home .homesize{position:absolute;top:max(.8rem,env(safe-area-inset-top,0px));right:max(.9rem,env(safe-area-inset-right,0px));z-index:3;background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.55);color:#fff}
-@media (min-width:640px) and (min-height:640px){#home .homesize{top:3.2rem}}
 .logobtn{background:none;border:0;padding:0;display:flex;flex-shrink:0;border-radius:.6rem}
 @media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
 
@@ -1052,7 +1051,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   $("prieBtn").onclick = aPrie;
   $("precBtn").onclick = () => aller(-1); $("suivBtn").onclick = () => aller(1);
   $("sortirBtn").onclick = () => cloture("sortie");
-  $("finAutre").onclick = messageFin;
+  $("finAutre").onclick = ouvrirChoix;
   $("finBtn").onclick = () => {
     if ($("finBtn").dataset.m === "erreur") { location.reload(); return; }
     plein("fin", false); P.phase = null; $("deck").innerHTML = ""; accueil();
