@@ -15,4 +15,9 @@ Application web (sans compte, en français) pour confier une intention de prièr
 - Un projet Supabase gratuit se met en pause après 7 jours sans activité : prévoir un réveil automatique avant le pèlerinage.
 
 ## Version
-v37 (novembre 2026) : engrenage des paramètres redessiné, micro et bouton Envoyer plus petits ; bas de la page Prier plus compact ; accueil épuré, paramètres, micro années 50, instant de silence, 5 phrases de sortie du missel.
+v42 (novembre 2026) : textes d'accueil et de la case Grotte ; 500 intentions affichées au plus (les plus anciennes disparaissent) ; les moins priées passent en premier ; fichier Word pour la Grotte avec rappel à 200 ; rappel quotidien par notification (voir supabase/).
+
+## Rappels quotidiens et fichier Word (Supabase)
+- Migration : colonne `intentions.envoye_le`, fonction `admin_marquer_envoyees`, tables `config_push` et `abonnements_rappel`, fonctions `abonner_rappel` / `desabonner_rappel`.
+- `supabase/rappels/index.ts` : fonction Edge qui envoie le rappel (push web sans texte, signé VAPID). `supabase/rappels.sql` : planification quotidienne (pg_cron).
+- La clé privée VAPID et le jeton restent dans la table `config_push` (illisible par le public) : ne jamais les écrire dans le dépôt.

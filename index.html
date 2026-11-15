@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Marcellus&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
 <script>
 // Connexion à la base (Supabase). La clé ci-dessous est la clé publique « anon » : elle est faite pour être visible,
 // la sécurité repose sur les règles de la base (RLS) et sur les fonctions qui exigent le code bénévole.
@@ -34,7 +35,7 @@
   }
   const rpc = (nom, corps) => appel("rpc/" + nom, { method: "POST", body: JSON.stringify(corps) });
   const mapper = (r) => ({ id: r.id, texte: r.texte, auteur: r.auteur, lourdes: r.lourdes, creeLe: Date.parse(r.cree_le) || Date.now(),
-    prieres: r.prieres || 0, signalements: r.signalements || 0, masque: !!r.masque, appareil: r.appareil });
+    envoyeLe: r.envoye_le ? Date.parse(r.envoye_le) : null, prieres: r.prieres || 0, signalements: r.signalements || 0, masque: !!r.masque, appareil: r.appareil });
   let rafraichir = () => {}, authCb = null;
   window.FB = window.FB || {
     admins: ["benevole"],
@@ -42,7 +43,7 @@
       let actif = true, timer = null;
       const charger = async () => {
         try {
-          const lignes = admin ? await rpc("admin_lister", { p_code: lireCode() }) : await appel("intentions?select=*&order=cree_le.desc&limit=300");
+          const lignes = admin ? await rpc("admin_lister", { p_code: lireCode() }) : await appel("intentions?select=*&order=cree_le.desc&limit=1000");
           if (actif) ok((lignes || []).map(mapper));
         } catch (e) { if (actif) { if (admin && e.status >= 400 && e.status < 500) { try { sessionStorage.removeItem("code-benevole"); } catch (x) {} authCb && authCb(null); } ko(e); } }
       };
@@ -55,6 +56,9 @@
     },
     async add(d) { await appel("intentions", { method: "POST", headers: Object.assign({ Prefer: "return=minimal" }, H), body: JSON.stringify(d) }); rafraichir(); },
     async incr(id, champ) { await rpc(champ === "prieres" ? "prier" : "signaler", { p_id: id, p_appareil: appareil() }); },
+    async abonner(sub) { const j = sub.toJSON(); await rpc("abonner_rappel", { p_endpoint: j.endpoint, p_p256dh: (j.keys || {}).p256dh || null, p_auth: (j.keys || {}).auth || null }); },
+    async desabonner(endpoint) { await rpc("desabonner_rappel", { p_endpoint: endpoint }); },
+    async marquerEnvoyees(ids) { await rpc("admin_marquer_envoyees", { p_code: lireCode(), p_ids: ids }); rafraichir(); },
     async setMasque(id, v) { await rpc("admin_masquer", { p_code: lireCode(), p_id: id, p_masque: v }); rafraichir(); },
     async login(code) {
       await rpc("admin_lister", { p_code: code });
@@ -68,6 +72,10 @@
 })();
 </script>
 <style>
+.wordbox{display:flex;flex-direction:column;gap:.6rem;padding:.9rem;border:2px solid var(--line);border-radius:14px}
+.wordbox.alerte{border-color:var(--red);background:var(--red-soft)}
+.wordbar{height:.6rem;border-radius:9px;background:var(--line);overflow:hidden}.wordbar i{display:block;height:100%;width:0;background:var(--red)}
+.homepop .point::after{content:"";display:inline-block;width:.6rem;height:.6rem;margin-left:.5rem;border-radius:50%;background:var(--red)}
 /* Mise en page : une application d'un seul écran. En-tête, contenu qui défile, deux grands onglets en bas.
    Sur ordinateur, elle s'affiche dans un cadre de téléphone. Texte en rem : le bouton A+ agrandit tout. */
 *{box-sizing:border-box}
@@ -620,7 +628,14 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       </div>
       <div class="view ben-only" hidden>
         <h3>Imprimer pour la Grotte</h3>
-        <ol class="steps"><li>Cochez les intentions à porter à Lourdes.</li><li>Téléchargez le PDF : six intentions par page A4.</li><li>Imprimez, découpez et déposez-les à la Grotte.</li></ol>
+        <div id="wordBox" class="wordbox">
+          <p id="wordMsg" role="status"></p>
+          <div class="wordbar" aria-hidden="true"><i id="wordBar"></i></div>
+          <button class="big blue" id="wordBtn" type="button" disabled>Fichier Word</button>
+          <button class="linkbtn" id="wordRaz" type="button" disabled>J'ai envoyé le fichier : remettre le compteur à zéro</button>
+        </div>
+        <p class="lead">Les intentions « Déposer à Lourdes » s'ajoutent d'elles-mêmes au fichier Word. À 200, un rappel s'affiche ici : envoyez le fichier à la personne qui l'imprimera à Lourdes, puis remettez le compteur à zéro.</p>
+        <p class="lead" style="margin-top:.2rem">Vous préférez des cartes à découper ? Cochez des intentions et téléchargez le PDF : six par page A4.</p>
         <div class="listhead"><span><b id="lCount">0</b> pour la Grotte</span><button class="linkbtn" id="selAll" type="button">Tout cocher</button></div>
         <div class="list" id="lList"></div>
         <button class="big blue" id="pdfBtn" type="button" disabled>Cochez des intentions</button>
@@ -638,8 +653,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   </nav>
 
   <div id="home" hidden>
-    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>Prier avec vous</small></button>
-    <button class="half ecrire" id="homeEcrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><b>Confier</b><small>Confier une intention</small></button>
+    <button class="half prier" id="homePrier" type="button"><span class="emo" aria-hidden="true">🙏</span><b>Prier</b><small>pour les intentions partagées</small></button>
+    <button class="half ecrire" id="homeEcrire" type="button"><svg class="ic" aria-hidden="true"><use href="#i-pen"/></svg><b>Confier</b><small>une intention de prière</small></button>
     <div class="homebrand"><b>Ordre de Malte</b><small>Hospitalité française</small></div>
     <button class="iconbtn homemenu" id="homeMenu" type="button" aria-haspopup="true" aria-expanded="false" aria-label="Paramètres"><span class="gearimg" aria-hidden="true"></span></button>
     <div class="homepop" id="homePop" hidden role="menu" aria-label="Paramètres">
@@ -845,30 +860,35 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     ouvrir("À propos et confidentialité", [rang, zone]); rendre(onglet);
   }
 
-  // Rappels : notification locale + synchronisation périodique (là où le navigateur la permet). Pas de serveur d'envoi.
+  // Rappels quotidiens : notification « push » web. Le navigateur s'abonne, la base garde l'adresse d'envoi (aucun nom, aucune donnée personnelle),
+  // et un envoi automatique part chaque matin (voir supabase/rappels). Sur iPhone : ajouter d'abord le site à l'écran d'accueil.
+  const VAPID = "BF5flMnpc7Mm9a3e3z-CkXUTTPzO8PgP1IddLzY0oYtSoeRIX6CsjJoyXZCJXOuTgrOCzfOiTS1B2AjFjWPI8Jw";
+  const cleBinaire = (b64) => { const p = "=".repeat((4 - b64.length % 4) % 4), r = atob((b64 + p).replace(/-/g, "+").replace(/_/g, "/")); return Uint8Array.from(r, (c) => c.charCodeAt(0)); };
   async function rappels() {
     const zone = el("div", "view"); zone.style.gap = ".9rem";
     const etat = el("p"), bouton = el("button", "big primary"); bouton.type = "button";
-    const actif = () => lire("rappel", false) && "Notification" in window && Notification.permission === "granted";
+    const pris = async () => { try { const r = await navigator.serviceWorker.ready; return await r.pushManager.getSubscription(); } catch (e) { return null; } };
     const maj = async () => {
-      let periodique = false; try { const r = await navigator.serviceWorker.ready; periodique = "periodicSync" in r; } catch (e) {}
-      if (!("Notification" in window)) { etat.textContent = "Ce navigateur ne gère pas les notifications. Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil (Partager > Sur l'écran d'accueil)."; bouton.hidden = true; return; }
+      const ok = "Notification" in window && "PushManager" in window && "serviceWorker" in navigator;
+      if (!ok) { etat.textContent = "Ce navigateur ne gère pas les rappels. Sur iPhone, ajoutez d'abord l'application à l'écran d'accueil (Partager > Sur l'écran d'accueil), puis rouvrez-la depuis l'icône."; bouton.hidden = true; return; }
       if (Notification.permission === "denied") { etat.textContent = "Les notifications sont bloquées pour ce site. Autorisez-les dans les réglages du navigateur."; bouton.hidden = true; return; }
-      bouton.hidden = false; bouton.textContent = actif() ? "Désactiver les rappels" : "Activer les rappels";
-      etat.innerHTML = (actif() ? "<b>Rappels activés.</b> " : "") + "Un rappel discret vous invite à prier pour les intentions des autres, environ une fois par jour." + (periodique ? "" : " <b>Sur cet appareil, l'envoi automatique n'est pas encore disponible</b> : il demandera un petit serveur d'envoi, à ajouter ensuite.");
+      const sub = await pris();
+      bouton.hidden = false; bouton.textContent = sub ? "Désactiver le rappel" : "Activer le rappel quotidien";
+      etat.innerHTML = (sub ? "<b>Rappel activé.</b> " : "") + "Chaque matin, une notification discrète vous invite à prier pour les intentions des autres. Rien d'autre n'est envoyé.";
     };
     bouton.onclick = async () => {
+      bouton.disabled = true;
       try {
-        const reg = await navigator.serviceWorker.ready;
-        if (actif()) { ecrire("rappel", false); if (reg.periodicSync) await reg.periodicSync.unregister("rappel").catch(() => {}); }
+        const reg = await navigator.serviceWorker.ready, sub = await reg.pushManager.getSubscription();
+        if (sub) { const ep = sub.endpoint; await sub.unsubscribe(); await FB().desabonner(ep).catch(() => {}); }
         else {
-          const p = await Notification.requestPermission(); if (p !== "granted") { await maj(); return; }
-          ecrire("rappel", true);
-          if (reg.periodicSync) await reg.periodicSync.register("rappel", { minInterval: 24 * 3600 * 1000 }).catch(() => {});
-          reg.showNotification("Rappels activés", { body: "Nous vous inviterons à prier pour les intentions des autres.", icon: "icon-192.png", tag: "rappel" });
+          if ((await Notification.requestPermission()) !== "granted") { await maj(); bouton.disabled = false; return; }
+          const n = await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: cleBinaire(VAPID) });
+          await FB().abonner(n);
+          reg.showNotification("Rappel activé", { body: "Chaque matin, nous vous inviterons à prier pour les intentions des autres.", icon: "icon-192.png", tag: "rappel" });
         }
       } catch (e) { toast("Les rappels ne sont pas disponibles ici"); }
-      maj();
+      bouton.disabled = false; maj();
     };
     zone.append(etat, bouton); ouvrir("Rappels de prière", [zone]); maj();
   }
@@ -925,13 +945,17 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     ["Que le nom du Seigneur soit béni, maintenant et pour les siècles des siècles.", "Missel romain, bénédiction (Ps 112)"],
     ["Notre secours est dans le nom du Seigneur, qui a fait le ciel et la terre.", "Missel romain, bénédiction (Ps 123)"],
   ];
+  const MAX_AFFICHEES = 500;
   let derniereCloture = -1;
 
   const jourCle = () => { const d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); };
   const jourPrie = () => { const j = lire("prieJour", {}); return new Set(j.d === jourCle() ? j.ids : []); };
   function noterJour(id) { const s = jourPrie(); s.add(id); ecrire("prieJour", { d: jourCle(), ids: [...s] }); }
   function liste() {
-    const q = visibles().filter((i) => !i.lourdes).sort((a, b) => b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)));
+    // Au plus MAX_AFFICHEES intentions : les plus récentes restent, les plus anciennes disparaissent de l'affichage (le compteur 🙏 est conservé en base).
+    // Répartition homogène : les moins priées passent en premier, à égalité les plus récentes.
+    const q = visibles().filter((i) => !i.lourdes).sort((a, b) => b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)))
+      .slice(0, MAX_AFFICHEES).sort((a, b) => (a.prieres || 0) - (b.prieres || 0) || b.creeLe - a.creeLe || String(a.id).localeCompare(String(b.id)));
     q.unshift(saintDuJour());
     const auj = jourPrie(); // les intentions déjà priées aujourd'hui passent en fin de liste : on peut toujours recommencer un parcours
     return q.filter((i) => !auj.has(i.id)).concat(q.filter((i) => auj.has(i.id)));
@@ -1118,7 +1142,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   $("lourdesChk").onchange = () => {
     if (!$("lourdesChk").checked) return;
     const b = el("button", "big primary petit"); b.type = "button"; b.textContent = "J'ai compris"; b.onclick = fermer;
-    ouvrir("", [el("p", "", "Cette intention sera confiée à un chapelain de l'Ordre de Malte qui la déposera à la Grotte de Lourdes."), el("p", "", "Elle n'apparaîtra donc pas dans la liste des intentions proposées à la prière sur l'application."), b], true);
+    ouvrir("", [el("p", "", "Cette intention sera confiée à un chapelain de l'Ordre de Malte pour qu'elle soit déposée à la Grotte de Lourdes."), el("p", "", "Elle n'apparaîtra donc pas dans la liste des intentions proposées à la prière sur l'application."), b], true);
   };
   $("anonChk").onchange = () => { const a = $("anonChk").checked; $("prenom").hidden = a; if (!a) $("prenom").focus(); };
 
@@ -1176,7 +1200,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   }
 
   // ---------- Espace bénévoles ----------
-  const lourdesListe = () => visibles().filter((i) => i.lourdes).sort((a, b) => a.creeLe - b.creeLe);
+  const lourdesListe = () => visibles().filter((i) => i.lourdes && !i.envoyeLe).sort((a, b) => a.creeLe - b.creeLe);
   function renderBenevoles() {
     $("benLogin").hidden = S.admin; document.querySelectorAll(".ben-only").forEach((e) => { e.hidden = !S.admin; });
     if (!S.admin) return;
@@ -1191,8 +1215,49 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       r.querySelector("p").textContent = i.texte; const m = r.querySelectorAll(".meta span");
       m[0].textContent = i.auteur || "Anonyme"; m[1].textContent = depuis(i.creeLe); m[2].textContent = (i.prieres || 0) + (i.prieres > 1 ? " prières" : " prière"); list.append(r);
     });
-    $("selAll").textContent = L.length && S.selection.size === L.length ? "Tout décocher" : "Tout cocher"; majPdf(); renderMod();
+    $("selAll").textContent = L.length && S.selection.size === L.length ? "Tout décocher" : "Tout cocher"; majPdf(); majWord(L); renderMod();
   }
+  // Fichier Word : toutes les intentions « Grotte » pas encore envoyées. À SEUIL_WORD, un rappel s'affiche (et un point rouge sur « Accès administrateurs »).
+  const SEUIL_WORD = 200;
+  function majWord(L) {
+    L = L || lourdesListe(); const n = L.length, plein = n >= SEUIL_WORD;
+    $("wordBox").classList.toggle("alerte", plein);
+    $("wordMsg").innerHTML = plein
+      ? "<b>Rappel : " + n + " intentions pour la Grotte.</b> Téléchargez le fichier Word et envoyez-le à la personne qui l'imprimera à Lourdes."
+      : "<b>" + n + " / " + SEUIL_WORD + "</b> intentions dans le fichier Word pour la Grotte.";
+    $("wordBar").style.width = Math.min(100, n / SEUIL_WORD * 100) + "%";
+    $("wordBtn").disabled = n === 0; $("wordBtn").textContent = n === 0 ? "Aucune intention à envoyer" : "Télécharger le fichier Word (" + n + ")";
+    $("wordRaz").disabled = n === 0;
+    const pt = $("homePop") && $("homePop").querySelector('[data-m="admin"]'); if (pt) pt.classList.toggle("point", S.admin && plein);
+  }
+  const xml = (t) => String(t).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  const para = (t, o) => { o = o || {}; return '<w:p><w:pPr>' + (o.centre ? '<w:jc w:val="center"/>' : '') + '<w:spacing w:after="' + (o.apres == null ? 120 : o.apres) + '"/>' + (o.coupe ? '<w:keepNext/>' : '') + '</w:pPr><w:r><w:rPr>' + (o.gras ? '<w:b/>' : '') + (o.ital ? '<w:i/>' : '') + '<w:sz w:val="' + (o.taille || 28) + '"/></w:rPr><w:t xml:space="preserve">' + xml(t) + '</w:t></w:r></w:p>'; };
+  async function construireWord(items) {
+    const jour = new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+    let corps = para("Intentions confiées à Notre-Dame de Lourdes", { centre: true, gras: true, taille: 36, apres: 60 }) + para("Ordre de Malte France · Pèlerinage de Lourdes · " + jour + " · " + items.length + " intentions", { centre: true, ital: true, taille: 20, apres: 360 });
+    items.forEach((it, k) => {
+      corps += para(it.texte.split(/\n+/).join(" "), { coupe: true, apres: 60 }) + para("— " + (it.auteur || "Anonyme"), { ital: true, taille: 22, apres: 40, coupe: true }) + para("Intention n° " + (k + 1), { taille: 16, apres: 280 });
+    });
+    const z = new window.JSZip();
+    z.file("[Content_Types].xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>');
+    z.file("_rels/.rels", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+    z.file("word/document.xml", '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' + corps + '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>');
+    return z.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
+  }
+  $("wordBtn").onclick = async () => {
+    const items = lourdesListe(); if (!items.length) return;
+    if (!window.JSZip) { toast("Le fichier n'a pas pu se préparer, rechargez la page"); return; }
+    try { const url = URL.createObjectURL(await construireWord(items)); const l = document.createElement("a"); l.href = url; l.download = "intentions-grotte-lourdes-" + new Date().toISOString().slice(0, 10) + ".docx";
+      document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); toast("Fichier Word prêt");
+    } catch (e) { toast("Le fichier Word n'a pas pu être créé"); }
+  };
+  $("wordRaz").onclick = () => {
+    const items = lourdesListe(); if (!items.length) return;
+    const oui = el("button", "big primary petit"); oui.type = "button"; oui.textContent = "Oui, remettre à zéro";
+    const non = el("button", "linkbtn"); non.type = "button"; non.textContent = "Non, garder"; non.onclick = fermer;
+    oui.onclick = async () => { oui.disabled = true; try { await FB().marquerEnvoyees(items.map((i) => i.id)); fermer(); toast("Compteur remis à zéro"); } catch (e) { oui.disabled = false; toast("La remise à zéro a échoué"); } };
+    ouvrir("Fichier envoyé ?", [el("p", "", "Les " + items.length + " intentions actuelles seront considérées comme envoyées à Lourdes et quitteront cette liste. Elles ne sont pas supprimées."), oui, non], true);
+  };
   function majPdf() { const n = S.selection.size; $("pdfBtn").disabled = n === 0; $("pdfBtn").textContent = n === 0 ? "Cochez des intentions" : "Télécharger le PDF (" + n + ")"; }
   $("selAll").onclick = () => { const L = lourdesListe(); if (S.selection.size === L.length) S.selection.clear(); else L.forEach((i) => S.selection.add(i.id)); renderBenevoles(); };
   // PDF : six cartes par page A4, avec traits de coupe
@@ -1280,7 +1345,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     if (!window.FB) { S.loaded = true; S.erreur = true; renderDeck(); return; }
     S.db = true; let arret = null;
     const ecoute = () => { if (arret) arret(); arret = FB().subscribe(S.admin,
-      (docs) => { S.items = docs; S.loaded = true; S.erreur = false; renderDeck(); if (vue === "benevoles") renderBenevoles(); },
+      (docs) => { S.items = docs; S.loaded = true; S.erreur = false; renderDeck(); if (S.admin) majWord(); if (vue === "benevoles") renderBenevoles(); },
       () => { S.loaded = true; S.erreur = true; renderDeck(); }); };
     FB().onAuth((u) => { const admin = !!u; const change = admin !== S.admin; S.admin = admin; if (change || !arret) ecoute(); if (vue === "benevoles") renderBenevoles(); });
   })();
