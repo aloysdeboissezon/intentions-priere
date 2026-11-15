@@ -1,5 +1,5 @@
 // Mode hors ligne minimal : la page et les icônes sont gardées en mémoire ; les intentions viennent toujours du réseau.
-const CACHE = "intentions-v41";
+const CACHE = "intentions-v42";
 const FICHIERS = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "exemples.js"];
 self.addEventListener("install", (e) => { e.waitUntil(caches.open(CACHE).then((c) => c.addAll(FICHIERS)).then(() => self.skipWaiting())); });
 self.addEventListener("activate", (e) => { e.waitUntil(caches.keys().then((ks) => Promise.all(ks.filter((k) => k !== CACHE).map((k) => caches.delete(k)))).then(() => self.clients.claim())); });
@@ -9,8 +9,9 @@ self.addEventListener("fetch", (e) => {
   e.respondWith(fetch(r).then((rep) => { const copie = rep.clone(); caches.open(CACHE).then((c) => c.put(r, copie)); return rep; }).catch(() => caches.match(r).then((m) => m || caches.match("index.html"))));
 });
 
-self.addEventListener("periodicsync", (e) => {
-  if (e.tag === "rappel") e.waitUntil(self.registration.showNotification("Intentions de prière", { body: "Des intentions attendent votre prière.", icon: "icon-192.png", badge: "icon-192.png", tag: "rappel", data: { url: "./#prier" } }));
+// Envoi quotidien (push) : le serveur envoie un signal sans texte, la notification est écrite ici.
+self.addEventListener("push", (e) => {
+  e.waitUntil(self.registration.showNotification("Intentions de prière", { body: "Des intentions attendent votre prière.", icon: "icon-192.png", badge: "icon-192.png", tag: "rappel", data: { url: "./#prier" } }));
 });
 self.addEventListener("notificationclick", (e) => {
   e.notification.close();
