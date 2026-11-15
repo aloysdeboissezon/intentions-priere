@@ -622,7 +622,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       <h2 id="h-ben">Accès administrateurs</h2>
       <div id="benLogin" class="view" style="gap:.8rem">
         <p class="lead">Réservé aux administrateurs de l'Hospitalité. Entrez le code qui vous a été remis.</p>
-        <input type="password" id="codeInput" placeholder="Code d'accès" autocomplete="current-password" autocapitalize="characters" aria-label="Code d'accès administrateur">
+        <input type="password" id="codeInput" inputmode="numeric" pattern="[0-9]*" placeholder="Code d'accès" autocomplete="current-password" aria-label="Code d'accès administrateur">
         <button class="big blue" id="loginBtn" type="button">Entrer</button>
         <p id="benMsg" role="alert" style="font-weight:700;color:var(--red)"></p>
       </div>
