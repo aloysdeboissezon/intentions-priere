@@ -28,6 +28,7 @@
   const H = { apikey: KEY, Authorization: "Bearer " + KEY, "Content-Type": "application/json" };
   const appareil = () => { try { return JSON.parse(localStorage.getItem("appareil")); } catch (e) { return null; } };
   const lireCode = () => { try { return sessionStorage.getItem("code-benevole"); } catch (e) { return null; } };
+  const lireRole = () => { try { return sessionStorage.getItem("role-benevole") || "admin"; } catch (e) { return "admin"; } };
   async function appel(chemin, opts) {
     const r = await fetch(URL + "/rest/v1/" + chemin, Object.assign({ headers: H }, opts));
     if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; }
@@ -35,7 +36,7 @@
   }
   const rpc = (nom, corps) => appel("rpc/" + nom, { method: "POST", body: JSON.stringify(corps) });
   const mapper = (r) => ({ id: r.id, texte: r.texte, auteur: r.auteur, lourdes: r.lourdes, creeLe: Date.parse(r.cree_le) || Date.now(),
-    envoyeLe: r.envoye_le ? Date.parse(r.envoye_le) : null, prieres: r.prieres || 0, signalements: r.signalements || 0, masque: !!r.masque, appareil: r.appareil });
+    envoyeLe: r.envoye_le ? Date.parse(r.envoye_le) : null, prieres: r.prieres || 0, signalements: r.signalements || 0, masque: !!r.masque, appareil: r.appareil, deposeLe: r.depose_le ? Date.parse(r.depose_le) : null, validee: !!r.validee });
   let rafraichir = () => {}, authCb = null;
   window.FB = window.FB || {
     admins: ["benevole"],
@@ -44,7 +45,8 @@
       const charger = async () => {
         try {
           const lignes = admin ? await rpc("admin_lister", { p_code: lireCode() }) : await appel("intentions?select=*&order=cree_le.desc&limit=1000");
-          if (actif) ok((lignes || []).map(mapper));
+          let nb = null; try { nb = await rpc("compter_grotte", {}); } catch (e) {}
+          if (actif) ok((lignes || []).map(mapper), nb);
         } catch (e) { if (actif) { if (admin && e.status >= 400 && e.status < 500) { try { sessionStorage.removeItem("code-benevole"); } catch (x) {} authCb && authCb(null); } ko(e); } }
       };
       rafraichir = charger;
@@ -59,14 +61,17 @@
     async abonner(sub) { const j = sub.toJSON(); await rpc("abonner_rappel", { p_endpoint: j.endpoint, p_p256dh: (j.keys || {}).p256dh || null, p_auth: (j.keys || {}).auth || null }); },
     async desabonner(endpoint) { await rpc("desabonner_rappel", { p_endpoint: endpoint }); },
     async marquerEnvoyees(ids) { await rpc("admin_marquer_envoyees", { p_code: lireCode(), p_ids: ids }); rafraichir(); },
-    async setMasque(id, v) { await rpc("admin_masquer", { p_code: lireCode(), p_id: id, p_masque: v }); rafraichir(); },
+    async marquerDeposees(ids) { await rpc("admin_marquer_deposees", { p_code: lireCode(), p_ids: ids }); rafraichir(); },
+    async supprimer(id) { await rpc("admin_supprimer", { p_code: lireCode(), p_id: id }); rafraichir(); },
+    async valider(id) { await rpc("admin_valider", { p_code: lireCode(), p_id: id }); rafraichir(); },
+    stats() { return rpc("admin_stats", { p_code: lireCode() }); },
     async login(code) {
-      await rpc("admin_lister", { p_code: code });
-      try { sessionStorage.setItem("code-benevole", code); } catch (e) {}
-      authCb && authCb({ email: "benevole" });
+      const role = await rpc("admin_role", { p_code: code });
+      try { sessionStorage.setItem("code-benevole", code); sessionStorage.setItem("role-benevole", role); } catch (e) {}
+      authCb && authCb({ email: "benevole", role });
     },
-    logout() { try { sessionStorage.removeItem("code-benevole"); } catch (e) {} authCb && authCb(null); },
-    onAuth(cb) { authCb = cb; cb(lireCode() ? { email: "benevole" } : null); },
+    logout() { try { sessionStorage.removeItem("code-benevole"); sessionStorage.removeItem("role-benevole"); } catch (e) {} authCb && authCb(null); },
+    onAuth(cb) { authCb = cb; cb(lireCode() ? { email: "benevole", role: lireRole() } : null); },
   };
   window.dispatchEvent(new Event("fb-pret"));
 })();
@@ -342,6 +347,15 @@ input[type="text"],input[type="password"]{width:100%;border:2px solid var(--ink)
 .item .mod{border:2px solid var(--line);background:var(--bg);border-radius:.7rem;padding:.5rem .7rem;font-size:.9rem;font-weight:700;white-space:nowrap}
 .item.masked{opacity:.55}
 .flag{color:var(--red);font-weight:700}
+.item .acts{display:flex;flex-direction:column;gap:.4rem}
+.item .mod.del{border-color:var(--red);color:var(--red)}
+.dash{display:flex;flex-direction:column;gap:.8rem;padding:.9rem;border:2px solid var(--line);border-radius:14px}
+.dash .row .lab{font-size:.9rem;font-weight:700;margin-bottom:.2rem}
+.dash .row .track{display:flex;align-items:center;gap:.6rem}
+.dash .bar{flex:1;height:1rem;border-radius:9px;background:var(--line);overflow:hidden}
+.dash .bar i{display:block;height:100%;width:0;background:var(--blue);border-radius:9px;transition:width .9s ease}
+.dash .val{min-width:3rem;text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.dash small{color:var(--muted)}
 
 /* Onglets du bas */
 nav.tabs{flex-shrink:0;display:grid;grid-template-columns:1fr 1fr;gap:.7rem;border-top:1px solid var(--line);background:var(--bg);
@@ -622,11 +636,15 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       <h2 id="h-ben">Accès administrateurs</h2>
       <div id="benLogin" class="view" style="gap:.8rem">
         <p class="lead">Réservé aux administrateurs de l'Hospitalité. Entrez le code qui vous a été remis.</p>
-        <input type="password" id="codeInput" inputmode="numeric" pattern="[0-9]*" placeholder="Code d'accès" autocomplete="current-password" aria-label="Code d'accès administrateur">
+        <input type="password" id="codeInput" placeholder="Code d'accès" autocomplete="current-password" aria-label="Code d'accès administrateur">
         <button class="big blue" id="loginBtn" type="button">Entrer</button>
         <p id="benMsg" role="alert" style="font-weight:700;color:var(--red)"></p>
       </div>
       <div class="view ben-only" hidden>
+        <p class="lead" id="roleMsg" style="font-weight:700"></p>
+        <h3>Tableau de bord</h3>
+        <div class="dash" id="dash" aria-live="polite"></div>
+        <div class="view grotte-only" hidden style="gap:.8rem">
         <h3>Imprimer pour la Grotte</h3>
         <div id="wordBox" class="wordbox">
           <p id="wordMsg" role="status"></p>
@@ -639,8 +657,10 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
         <div class="listhead"><span><b id="lCount">0</b> pour la Grotte</span><button class="linkbtn" id="selAll" type="button">Tout cocher</button></div>
         <div class="list" id="lList"></div>
         <button class="big blue" id="pdfBtn" type="button" disabled>Cochez des intentions</button>
+        <button class="big outline" id="depBtn" type="button" disabled>Cochez les intentions déposées à la Grotte</button>
+        </div>
         <h3 style="margin-top:.8rem">Modération</h3>
-        <p class="lead">Les intentions signalées sont en premier. Une intention masquée disparaît pour tout le monde.</p>
+        <p class="lead">Les intentions signalées sont en premier. « Valider » la garde, « Supprimer » l'efface définitivement.</p>
         <div class="list" id="mList"></div>
         <button class="linkbtn" id="logoutBtn" type="button">Se déconnecter</button>
       </div>
@@ -722,7 +742,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   const LOGO = $("logoImg").src;
   const IC = (n) => n === "hands" ? '<span class="emo" aria-hidden="true">🙏</span>' : '<svg class="ic" aria-hidden="true"><use href="#i-' + n + '"/></svg>';
   const S = { items: [], loaded: false, erreur: false, deja: new Set(), signales: new Set(), passees: new Set(),
-    uid: null, admin: false, selection: new Set(), db: false };
+    uid: null, admin: false, role: null, nbGrotte: 0, stats: null, selection: new Set(), db: false };
   const lire = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch (e) { return d; } };
   const ecrire = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
   const FB = () => window.FB;
@@ -1105,7 +1125,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     if (P.phase === "attente" && S.loaded) lancer();
   }
   function renderGrotte() { if (!$("bandeau")) return;
-    const n = visibles().filter((i) => i.lourdes).length; $("bandeau").hidden = n === 0;
+    const n = S.nbGrotte || 0; $("bandeau").hidden = n === 0;
     if (n) $("grotteTxt").innerHTML = "<b>" + n + (n > 1 ? " intentions" : " intention") + "</b> pour la Grotte";
   }
   function bindDrag(card) {
@@ -1184,6 +1204,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     try {
       const lourdes = $("lourdesChk").checked;
       await FB().add({ texte: t, auteur: anon ? null : prenom, lourdes, appareil: S.uid });
+      if (lourdes) { const l = lire("mesGrotte", []); l.unshift({ texte: t, creeLe: Date.now() }); ecrire("mesGrotte", l.slice(0, 10)); }
       texte.value = ""; majChars(); $("lourdesChk").checked = false; ecrire("brouillon", "");
       $("merciTexte").textContent = t;
       $("merciLead").textContent = lourdes ? "Merci. D'autres personnes vont prier pour vous, et elle sera déposée à la Grotte de Lourdes." : "Merci. D'autres personnes vont prier pour vous.";
@@ -1193,17 +1214,24 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   });
 
   function renderMine() {
-    const mes = S.uid ? visibles().filter((i) => i.appareil === S.uid).sort((a, b) => b.creeLe - a.creeLe).slice(0, 10) : [];
+    const locales = lire("mesGrotte", []).map((x) => ({ id: "g" + x.creeLe, texte: x.texte, creeLe: x.creeLe, grotte: true }));
+    const mes = S.uid ? visibles().filter((i) => i.appareil === S.uid).concat(locales).sort((a, b) => b.creeLe - a.creeLe).slice(0, 10) : [];
     $("mine").hidden = mes.length === 0; const l = $("mineList"); l.innerHTML = "";
     mes.forEach((i) => { const r = el("div", "it"); const p = el("p"); p.textContent = i.texte;
-      r.append(p, el("span", "count", IC("hands") + (i.prieres || 0))); r.lastChild.setAttribute("aria-label", personnes(i.prieres || 0)); l.append(r); });
+      if (i.grotte) { r.append(p, el("span", "count", "Grotte")); r.lastChild.setAttribute("aria-label", "Confiée à la Grotte de Lourdes"); } else { r.append(p, el("span", "count", IC("hands") + (i.prieres || 0))); r.lastChild.setAttribute("aria-label", personnes(i.prieres || 0)); } l.append(r); });
   }
 
   // ---------- Espace bénévoles ----------
-  const lourdesListe = () => visibles().filter((i) => i.lourdes && !i.envoyeLe).sort((a, b) => a.creeLe - b.creeLe);
+  const estAumonier = () => S.role === "aumonier";
+  const lourdesListe = () => visibles().filter((i) => i.lourdes && !i.deposeLe).sort((a, b) => a.creeLe - b.creeLe);
+  const lourdesWord = () => lourdesListe().filter((i) => !i.envoyeLe);
   function renderBenevoles() {
     $("benLogin").hidden = S.admin; document.querySelectorAll(".ben-only").forEach((e) => { e.hidden = !S.admin; });
     if (!S.admin) return;
+    document.querySelectorAll(".grotte-only").forEach((e) => { e.hidden = !estAumonier(); });
+    $("roleMsg").textContent = estAumonier() ? "Espace aumônier : vous voyez aussi les intentions de la Grotte." : "Espace administrateur.";
+    chargerStats();
+    if (!estAumonier()) { renderMod(); return; }
     const L = lourdesListe(); $("lCount").textContent = L.length;
     const ids = new Set(L.map((i) => i.id)); S.selection.forEach((id) => { if (!ids.has(id)) S.selection.delete(id); });
     const list = $("lList"); list.innerHTML = "";
@@ -1213,14 +1241,14 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       const cb = r.querySelector("input"); cb.checked = S.selection.has(i.id);
       cb.onchange = () => { cb.checked ? S.selection.add(i.id) : S.selection.delete(i.id); majPdf(); };
       r.querySelector("p").textContent = i.texte; const m = r.querySelectorAll(".meta span");
-      m[0].textContent = i.auteur || "Anonyme"; m[1].textContent = depuis(i.creeLe); m[2].textContent = (i.prieres || 0) + (i.prieres > 1 ? " prières" : " prière"); list.append(r);
+      m[0].textContent = i.auteur || "Anonyme"; m[1].textContent = depuis(i.creeLe); m[2].textContent = i.envoyeLe ? "Dans le fichier Word" : ""; list.append(r);
     });
-    $("selAll").textContent = L.length && S.selection.size === L.length ? "Tout décocher" : "Tout cocher"; majPdf(); majWord(L); renderMod();
+    $("selAll").textContent = L.length && S.selection.size === L.length ? "Tout décocher" : "Tout cocher"; majPdf(); majWord(); renderMod();
   }
   // Fichier Word : toutes les intentions « Grotte » pas encore envoyées. À SEUIL_WORD, un rappel s'affiche (et un point rouge sur « Accès administrateurs »).
   const SEUIL_WORD = 200;
   function majWord(L) {
-    L = L || lourdesListe(); const n = L.length, plein = n >= SEUIL_WORD;
+    L = lourdesWord(); const n = L.length, plein = n >= SEUIL_WORD;
     $("wordBox").classList.toggle("alerte", plein);
     $("wordMsg").innerHTML = plein
       ? "<b>Rappel : " + n + " intentions pour la Grotte.</b> Téléchargez le fichier Word et envoyez-le à la personne qui l'imprimera à Lourdes."
@@ -1245,21 +1273,28 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     return z.generateAsync({ type: "blob", mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document" });
   }
   $("wordBtn").onclick = async () => {
-    const items = lourdesListe(); if (!items.length) return;
+    const items = lourdesWord(); if (!items.length) return;
     if (!window.JSZip) { toast("Le fichier n'a pas pu se préparer, rechargez la page"); return; }
     try { const url = URL.createObjectURL(await construireWord(items)); const l = document.createElement("a"); l.href = url; l.download = "intentions-grotte-lourdes-" + new Date().toISOString().slice(0, 10) + ".docx";
       document.body.appendChild(l); l.click(); l.remove(); setTimeout(() => URL.revokeObjectURL(url), 4000); toast("Fichier Word prêt");
     } catch (e) { toast("Le fichier Word n'a pas pu être créé"); }
   };
   $("wordRaz").onclick = () => {
-    const items = lourdesListe(); if (!items.length) return;
+    const items = lourdesWord(); if (!items.length) return;
     const oui = el("button", "big primary petit"); oui.type = "button"; oui.textContent = "Oui, remettre à zéro";
     const non = el("button", "linkbtn"); non.type = "button"; non.textContent = "Non, garder"; non.onclick = fermer;
     oui.onclick = async () => { oui.disabled = true; try { await FB().marquerEnvoyees(items.map((i) => i.id)); fermer(); toast("Compteur remis à zéro"); } catch (e) { oui.disabled = false; toast("La remise à zéro a échoué"); } };
     ouvrir("Fichier envoyé ?", [el("p", "", "Les " + items.length + " intentions actuelles seront considérées comme envoyées à Lourdes et quitteront cette liste. Elles ne sont pas supprimées."), oui, non], true);
   };
-  function majPdf() { const n = S.selection.size; $("pdfBtn").disabled = n === 0; $("pdfBtn").textContent = n === 0 ? "Cochez des intentions" : "Télécharger le PDF (" + n + ")"; }
+  function majPdf() { const n = S.selection.size; $("depBtn").disabled = n === 0; $("depBtn").textContent = n === 0 ? "Cochez les intentions déposées à la Grotte" : "Marquer comme déposées à la Grotte (" + n + ")"; $("pdfBtn").disabled = n === 0; $("pdfBtn").textContent = n === 0 ? "Cochez des intentions" : "Télécharger le PDF (" + n + ")"; }
   $("selAll").onclick = () => { const L = lourdesListe(); if (S.selection.size === L.length) S.selection.clear(); else L.forEach((i) => S.selection.add(i.id)); renderBenevoles(); };
+  $("depBtn").onclick = () => {
+    const items = lourdesListe().filter((i) => S.selection.has(i.id)); if (!items.length) return;
+    const oui = el("button", "big primary petit"); oui.type = "button"; oui.textContent = "Oui, elles sont déposées";
+    const non = el("button", "linkbtn"); non.type = "button"; non.textContent = "Non, pas encore"; non.onclick = fermer;
+    oui.onclick = async () => { oui.disabled = true; try { await FB().marquerDeposees(items.map((i) => i.id)); S.selection.clear(); fermer(); toast("Marquées comme déposées"); } catch (e) { oui.disabled = false; toast("L'action a échoué"); } };
+    ouvrir("Déposées à la Grotte ?", [el("p", "", items.length + (items.length > 1 ? " intentions seront comptées comme déposées" : " intention sera comptée comme déposée") + " et quitteront cette liste. Elles ne sont pas supprimées."), oui, non], true);
+  };
   // PDF : six cartes par page A4, avec traits de coupe
   function latin(s) { return String(s).replace(/[^\x20-\x7E\xA0-\xFF\n’‘“”–—…œŒ€]/g, "").replace(/\s+/g, " ").trim(); }
   function croix(doc, cx, cy, r) {
@@ -1314,17 +1349,35 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   };
   function renderMod() {
     const list = $("mList"); list.innerHTML = "";
-    const all = S.items.slice().sort((a, b) => signale(b.id) - signale(a.id) || b.creeLe - a.creeLe);
+    const all = S.items.filter((i) => !i.masque).slice().sort((a, b) => (b.signalements || 0) - (a.signalements || 0) || b.creeLe - a.creeLe);
     if (!all.length) list.append(el("p", "lead", "Rien à modérer pour l'instant."));
     all.forEach((i) => {
-      const m = !!i.masque, s = signale(i.id); const r = el("div", "item" + (m ? " masked" : ""));
-      r.innerHTML = '<div class="body"><p></p><div class="meta"><span class="who"></span></div></div><button class="mod" type="button"></button>';
+      const s = i.signalements || 0; const r = el("div", "item");
+      r.innerHTML = '<div class="body"><p></p><div class="meta"><span class="who"></span></div></div><div class="acts"></div>';
       r.querySelector("p").textContent = i.texte; const meta = r.querySelector(".meta"); r.querySelector(".who").textContent = i.auteur || "Anonyme";
-      if (s) meta.append(el("span", "flag", "Signalée " + s + "×")); if (m) meta.append(el("span", "", "Masquée"));
-      const b = r.querySelector("button"); b.textContent = m ? "Rétablir" : "Masquer";
-      b.onclick = async () => { try { await FB().setMasque(i.id, !m); toast(m ? "Intention rétablie" : "Intention masquée"); } catch (e) { toast("Action impossible, reconnectez-vous"); } };
+      if (s) meta.append(el("span", "flag", "Signalée " + s + "×")); if (i.lourdes) meta.append(el("span", "", "Grotte"));
+      const acts = r.querySelector(".acts");
+      const act = (txt, cls, fn, msg) => { const b = el("button", "mod" + (cls ? " " + cls : ""), txt); b.type = "button";
+        b.onclick = async () => { b.disabled = true; try { await fn(); toast(msg); } catch (e) { b.disabled = false; toast("Action impossible, reconnectez-vous"); } }; acts.append(b); };
+      if (s) act("Valider", "", () => FB().valider(i.id), "Intention validée");
+      act("Supprimer", "del", () => FB().supprimer(i.id), "Intention supprimée");
       list.append(r);
     });
+  }
+  // Tableau de bord : cinq barres, échelle commune = la plus grande valeur.
+  const BARRES = [["confiees", "Intentions confiées"], ["prieres", "Intentions priées (prières dites)"], ["confiants", "Confiants (appareils)"], ["grotte", "Intentions confiées à la Grotte"], ["deposees", "Intentions déposées à la Grotte"]];
+  let statsEnCours = false;
+  async function chargerStats() {
+    if (statsEnCours || !FB().stats) return; statsEnCours = true;
+    try { S.stats = await FB().stats(); } catch (e) { S.stats = null; }
+    statsEnCours = false; renderDash();
+  }
+  function renderDash() {
+    const d = $("dash"); if (!d) return;
+    if (!S.stats) { d.textContent = "Chargement…"; d.dataset.pret = ""; return; }
+    const max = Math.max(1, ...BARRES.map(([k]) => Number(S.stats[k]) || 0));
+    if (d.dataset.pret !== "1") { d.innerHTML = ""; BARRES.forEach(([k, t]) => { const r = el("div", "row"); r.innerHTML = '<div class="lab"></div><div class="track"><div class="bar"><i></i></div><span class="val"></span></div>'; r.dataset.k = k; r.querySelector(".lab").textContent = t; d.append(r); }); d.append(el("small", "", "Échelle commune : la barre pleine correspond à la plus grande valeur.")); d.dataset.pret = "1"; }
+    d.querySelectorAll(".row").forEach((r) => { const v = Number(S.stats[r.dataset.k]) || 0; r.querySelector(".val").textContent = v; requestAnimationFrame(() => { r.querySelector("i").style.width = (v / max * 100) + "%"; }); });
   }
   $("loginBtn").onclick = async () => {
     const code = $("codeInput").value.trim(); if (!code) { $("benMsg").textContent = "Entrez le code d'accès."; return; }
@@ -1345,9 +1398,9 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     if (!window.FB) { S.loaded = true; S.erreur = true; renderDeck(); return; }
     S.db = true; let arret = null;
     const ecoute = () => { if (arret) arret(); arret = FB().subscribe(S.admin,
-      (docs) => { S.items = docs; S.loaded = true; S.erreur = false; renderDeck(); if (S.admin) majWord(); if (vue === "benevoles") renderBenevoles(); },
+      (docs, nb) => { S.items = docs; if (nb != null) S.nbGrotte = nb; else if (S.admin && estAumonier()) S.nbGrotte = docs.filter((i) => i.lourdes).length; S.loaded = true; S.erreur = false; renderDeck(); if (S.admin && estAumonier()) majWord(); if (vue === "benevoles") renderBenevoles(); },
       () => { S.loaded = true; S.erreur = true; renderDeck(); }); };
-    FB().onAuth((u) => { const admin = !!u; const change = admin !== S.admin; S.admin = admin; if (change || !arret) ecoute(); if (vue === "benevoles") renderBenevoles(); });
+    FB().onAuth((u) => { const admin = !!u; const change = admin !== S.admin; S.admin = admin; S.role = u ? u.role : null; S.stats = null; const dd = $("dash"); if (dd) dd.dataset.pret = ""; if (change || !arret) ecoute(); if (vue === "benevoles") renderBenevoles(); });
   })();
 
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
