@@ -660,7 +660,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
         <button class="big outline" id="depBtn" type="button" disabled>Cochez les intentions déposées à la Grotte</button>
         </div>
         <h3 style="margin-top:.8rem">Modération</h3>
-        <p class="lead">Les intentions signalées sont en premier. « Valider » la garde, « Supprimer » l'efface définitivement.</p>
+        <p class="lead">Les intentions signalées sont en premier. « Valider » la garde (elle ne sera plus signalable), « Supprimer » l'efface définitivement.</p>
         <div class="list" id="mList"></div>
         <button class="linkbtn" id="logoutBtn" type="button">Se déconnecter</button>
       </div>
@@ -1359,7 +1359,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       const acts = r.querySelector(".acts");
       const act = (txt, cls, fn, msg) => { const b = el("button", "mod" + (cls ? " " + cls : ""), txt); b.type = "button";
         b.onclick = async () => { b.disabled = true; try { await fn(); toast(msg); } catch (e) { b.disabled = false; toast("Action impossible, reconnectez-vous"); } }; acts.append(b); };
-      if (s) act("Valider", "", () => FB().valider(i.id), "Intention validée");
+      if (!i.validee) act("Valider", "", () => FB().valider(i.id), "Intention validée");
+      else meta.append(el("span", "", "Validée"));
       act("Supprimer", "del", () => FB().supprimer(i.id), "Intention supprimée");
       list.append(r);
     });
