@@ -633,7 +633,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     <!-- BENEVOLES -->
     <section class="view" id="v-benevoles" aria-labelledby="h-ben" hidden>
       <button class="back" type="button" id="backBtn">← Retour</button>
-      <h2 id="h-ben">Accès administrateurs</h2>
+      <h2 id="h-ben">Espace administrateurs</h2>
       <div id="benLogin" class="view" style="gap:.8rem">
         <p class="lead">Réservé aux administrateurs de l'Hospitalité. Entrez le code qui vous a été remis.</p>
         <input type="password" id="codeInput" placeholder="Code d'accès" autocomplete="current-password" aria-label="Code d'accès administrateur">
@@ -641,7 +641,6 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
         <p id="benMsg" role="alert" style="font-weight:700;color:var(--red)"></p>
       </div>
       <div class="view ben-only" hidden>
-        <p class="lead" id="roleMsg" style="font-weight:700"></p>
         <h3>Tableau de bord</h3>
         <div class="dash" id="dash" aria-live="polite"></div>
         <div class="view grotte-only" hidden style="gap:.8rem">
@@ -660,9 +659,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
         <button class="big outline" id="depBtn" type="button" disabled>Cochez les intentions déposées à la Grotte</button>
         </div>
         <h3 style="margin-top:.8rem">Modération</h3>
-        <p class="lead">Les intentions signalées sont en premier. « Valider » la garde (elle ne sera plus signalable), « Supprimer » l'efface définitivement.</p>
+        <p class="lead" id="modLead"></p>
         <div class="list" id="mList"></div>
-        <button class="linkbtn" id="logoutBtn" type="button">Se déconnecter</button>
       </div>
     </section>
   </main>
@@ -681,7 +679,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
       <button type="button" role="menuitem" data-m="apropos">À propos</button>
       <button type="button" role="menuitem" data-m="confid">Confidentialité</button>
       <button type="button" role="menuitem" data-m="rappels">Rappels de prière</button>
-      <button type="button" role="menuitem" data-m="admin">Accès administrateurs</button>
+      <button type="button" role="menuitem" data-m="admin">Espace administrateurs</button>
     </div>
     <button class="iconbtn homesize js-size" type="button" aria-pressed="false" aria-label="Agrandir le texte">A+</button>
   </div>
@@ -823,7 +821,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   function entrer(v) { const h = $("home"); h.classList.add("leave"); show(v); clearTimeout(tRideau); tRideau = setTimeout(() => { h.hidden = true; h.classList.remove("leave"); }, 440); }
   $("homePrier").onclick = () => ouvrirChoix();
   $("homeEcrire").onclick = () => { entrer("ecrire"); };
-  $("homeBtn").onclick = accueil;
+  // La croix de Malte ramène à l'accueil ; depuis l'espace administrateurs / chapelains, elle déconnecte aussi.
+  $("homeBtn").onclick = () => { if (vue === "benevoles" && S.admin) FB().logout(); accueil(); };
   (function ouverture() {
     const h = (location.hash || "").slice(1);
     if (h === "prier" || h === "ecrire") { $("splash").remove(); show(h); return; }
@@ -1223,13 +1222,14 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
 
   // ---------- Espace bénévoles ----------
   const estAumonier = () => S.role === "aumonier";
-  const lourdesListe = () => visibles().filter((i) => i.lourdes && !i.deposeLe).sort((a, b) => a.creeLe - b.creeLe);
+  const lourdesListe = () => visibles().filter((i) => i.lourdes && i.validee && !i.deposeLe).sort((a, b) => a.creeLe - b.creeLe);
   const lourdesWord = () => lourdesListe().filter((i) => !i.envoyeLe);
   function renderBenevoles() {
     $("benLogin").hidden = S.admin; document.querySelectorAll(".ben-only").forEach((e) => { e.hidden = !S.admin; });
     if (!S.admin) return;
     document.querySelectorAll(".grotte-only").forEach((e) => { e.hidden = !estAumonier(); });
-    $("roleMsg").textContent = estAumonier() ? "Espace aumônier : vous voyez aussi les intentions de la Grotte." : "Espace administrateur.";
+    $("h-ben").textContent = estAumonier() ? "Espace chapelains" : "Espace administrateurs";
+    $("modLead").textContent = estAumonier() ? "Validez chaque intention de la Grotte avant qu'elle ne soit imprimée ou déposée. Les intentions signalées par les utilisateurs apparaissent aussi ici." : "Les intentions ci-dessous ont été signalées par les utilisateurs.";
     chargerStats();
     if (!estAumonier()) { renderMod(); return; }
     const L = lourdesListe(); $("lCount").textContent = L.length;
@@ -1245,7 +1245,7 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     });
     $("selAll").textContent = L.length && S.selection.size === L.length ? "Tout décocher" : "Tout cocher"; majPdf(); majWord(); renderMod();
   }
-  // Fichier Word : toutes les intentions « Grotte » pas encore envoyées. À SEUIL_WORD, un rappel s'affiche (et un point rouge sur « Accès administrateurs »).
+  // Fichier Word : toutes les intentions « Grotte » pas encore envoyées. À SEUIL_WORD, un rappel s'affiche (et un point rouge sur « Espace administrateurs »).
   const SEUIL_WORD = 200;
   function majWord(L) {
     L = lourdesWord(); const n = L.length, plein = n >= SEUIL_WORD;
@@ -1349,8 +1349,9 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   };
   function renderMod() {
     const list = $("mList"); list.innerHTML = "";
-    const all = S.items.filter((i) => !i.masque).slice().sort((a, b) => (b.signalements || 0) - (a.signalements || 0) || b.creeLe - a.creeLe);
-    if (!all.length) list.append(el("p", "lead", "Rien à modérer pour l'instant."));
+    // Administrateur : uniquement les intentions signalées. Chapelain : aussi toutes celles de la Grotte pas encore validées.
+    const all = S.items.filter((i) => !i.masque && ((i.signalements || 0) > 0 || (estAumonier() && i.lourdes && !i.validee))).slice().sort((a, b) => (b.signalements || 0) - (a.signalements || 0) || b.creeLe - a.creeLe);
+    if (!all.length) list.append(el("p", "lead", estAumonier() ? "Rien à valider pour l'instant." : "Aucune intention signalée pour l'instant."));
     all.forEach((i) => {
       const s = i.signalements || 0; const r = el("div", "item");
       r.innerHTML = '<div class="body"><p></p><div class="meta"><span class="who"></span></div></div><div class="acts"></div>';
@@ -1366,7 +1367,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     });
   }
   // Tableau de bord : cinq barres, échelle commune = la plus grande valeur.
-  const BARRES = [["confiees", "Intentions confiées"], ["prieres", "Intentions priées (prières dites)"], ["confiants", "Confiants (appareils)"], ["grotte", "Intentions confiées à la Grotte"], ["deposees", "Intentions déposées à la Grotte"]];
+  const BARRES_TOUTES = [["confiees", "Intentions confiées"], ["prieres", "Intentions priées (prières dites)"], ["confiants", "Confiants (appareils)"], ["grotte", "Intentions confiées à la Grotte"], ["deposees", "Intentions déposées à la Grotte"]];
+  const barres = () => estAumonier() ? BARRES_TOUTES.slice(3) : BARRES_TOUTES; // le chapelain ne voit que les deux barres de la Grotte
   let statsEnCours = false;
   async function chargerStats() {
     if (statsEnCours || !FB().stats) return; statsEnCours = true;
@@ -1376,8 +1378,8 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
   function renderDash() {
     const d = $("dash"); if (!d) return;
     if (!S.stats) { d.textContent = "Chargement…"; d.dataset.pret = ""; return; }
-    const max = Math.max(1, ...BARRES.map(([k]) => Number(S.stats[k]) || 0));
-    if (d.dataset.pret !== "1") { d.innerHTML = ""; BARRES.forEach(([k, t]) => { const r = el("div", "row"); r.innerHTML = '<div class="lab"></div><div class="track"><div class="bar"><i></i></div><span class="val"></span></div>'; r.dataset.k = k; r.querySelector(".lab").textContent = t; d.append(r); }); d.append(el("small", "", "Échelle commune : la barre pleine correspond à la plus grande valeur.")); d.dataset.pret = "1"; }
+    const max = Math.max(1, ...barres().map(([k]) => Number(S.stats[k]) || 0));
+    if (d.dataset.pret !== "1") { d.innerHTML = ""; barres().forEach(([k, t]) => { const r = el("div", "row"); r.innerHTML = '<div class="lab"></div><div class="track"><div class="bar"><i></i></div><span class="val"></span></div>'; r.dataset.k = k; r.querySelector(".lab").textContent = t; d.append(r); }); d.append(el("small", "", "Échelle commune : la barre pleine correspond à la plus grande valeur.")); d.dataset.pret = "1"; }
     d.querySelectorAll(".row").forEach((r) => { const v = Number(S.stats[r.dataset.k]) || 0; r.querySelector(".val").textContent = v; requestAnimationFrame(() => { r.querySelector("i").style.width = (v / max * 100) + "%"; }); });
   }
   $("loginBtn").onclick = async () => {
@@ -1387,7 +1389,6 @@ main:has(#v-prier:not([hidden])){padding-bottom:.4rem!important}
     $("loginBtn").disabled = false;
   };
   $("codeInput").addEventListener("keydown", (e) => { if (e.key === "Enter") $("loginBtn").click(); });
-  $("logoutBtn").onclick = () => FB().logout();
 
   // ---------- Données ----------
   (async () => {
